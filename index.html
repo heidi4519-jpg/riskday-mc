@@ -1,0 +1,1095 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>
+<title>리스크공학부 야유회 MC</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+/* 레이아웃: 태블릿 가로 기준 3단(헤더 / 캐릭터+말풍선·게임판 / 진행 버튼), 좁으면 세로로 쌓임. 밤바다(수산시장 수조) 위에 종이 말풍선. */
+:root{
+  --sea:#0e2a40; --sea2:#163a57; --sea3:#21507a; --foam:#fff7ea; --ink:#1c2533;
+  --coral:#ff6a4d; --sun:#ffcf3a; --mint:#3fd0b0; --mute:#9fb7cc; --line:rgba(255,255,255,.12);
+  --display:"Jua","Noto Sans KR",system-ui,sans-serif;
+  --body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  color-scheme:dark;
+}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--sea);color:var(--foam);font-family:var(--body);overflow:hidden;
+  background-image:radial-gradient(120% 80% at 80% -10%,#1d4a70 0%,transparent 60%),radial-gradient(90% 60% at 0% 110%,#123d55 0%,transparent 60%);}
+button{font-family:inherit;cursor:pointer;border:0;color:inherit}
+button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.app{height:100%;display:grid;grid-template-rows:auto 1fr auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* header */
+header{display:flex;align-items:center;gap:12px;padding-block:10px 6px;min-width:0}
+.brand{display:flex;flex-direction:column;line-height:1.15;flex:none}
+.brand b{font-family:var(--display);font-size:20px;font-weight:400;color:var(--foam)}
+.brand span{font-size:12px;color:var(--mute);letter-spacing:.04em}
+.rail{flex:1;display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;min-width:0;padding:2px}
+.rail::-webkit-scrollbar{display:none}
+.rail button{flex:none;font-size:13px;padding:6px 10px;border-radius:999px;background:transparent;color:var(--mute);border:1px solid var(--line);white-space:nowrap}
+.rail button.done{color:#cfe0ee}
+.rail button.on{background:var(--sun);color:var(--ink);border-color:var(--sun);font-weight:700}
+.rail button.brk{border-style:dashed}
+.hbtns{display:flex;gap:6px;flex:none;align-items:center}
+.hbtn{background:var(--sea2);border:1px solid var(--line);padding:8px 12px;border-radius:12px;font-size:14px;font-weight:700}
+.tpill{background:var(--mint);color:var(--ink);font-weight:900;padding:7px 12px;border-radius:999px;font-variant-numeric:tabular-nums}
+
+/* main */
+main{display:grid;grid-template-columns:minmax(200px,32%) 1fr;gap:18px;min-height:0;padding-block:6px}
+.stage{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-height:0;position:relative}
+.stage .mcwrap{flex:1;min-height:0;width:100%;display:flex;align-items:flex-end;justify-content:center}
+.mc-svg,.mc-img{max-width:100%;max-height:100%;height:auto;display:block}
+.mc-img{object-fit:contain;border-radius:24px}
+.plate{margin-top:6px;background:var(--coral);color:#fff;font-family:var(--display);font-size:22px;padding:4px 18px 6px;border-radius:14px;transform:rotate(-2deg);box-shadow:0 4px 0 #c2442b}
+.plate small{font-family:var(--body);font-size:12px;opacity:.9;margin-left:6px}
+.right{display:flex;flex-direction:column;gap:12px;min-height:0;min-width:0}
+.bubble{position:relative;background:var(--foam);color:var(--ink);border-radius:26px;padding:20px 26px;font-family:var(--display);font-size:clamp(20px,2.5vw,32px);line-height:1.45;min-height:3.2em;box-shadow:0 6px 0 rgba(0,0,0,.25);cursor:pointer;word-break:keep-all;overflow-wrap:anywhere}
+.bubble::before{content:"";position:absolute;left:-18px;bottom:30px;border:12px solid transparent;border-right:20px solid var(--foam);border-left:0}
+.bubble .who{display:block;font-size:13px;font-family:var(--body);font-weight:700;color:var(--coral);letter-spacing:.06em;margin-bottom:2px}
+.caret{display:inline-block;width:.5em;height:1em;background:var(--coral);vertical-align:-.12em;margin-left:2px;animation:car .7s steps(1) infinite}
+@keyframes car{50%{opacity:0}}
+.widget{flex:1;min-height:0;overflow:auto;border-radius:22px;background:var(--sea2);border:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:14px}
+.widget:empty{display:none}
+
+/* footer */
+footer{display:flex;align-items:center;gap:12px;padding-block:8px 12px}
+.nav{font-family:var(--display);font-size:22px;border-radius:18px;padding:12px 22px}
+.prev{background:var(--sea2);border:1px solid var(--line);color:var(--mute)}
+.next{margin-left:auto;background:var(--sun);color:var(--ink);padding:14px 40px;font-size:26px;box-shadow:0 5px 0 #c99a12}
+.next:active{transform:translateY(3px);box-shadow:0 2px 0 #c99a12}
+.prog{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0}
+.prog .bar{height:8px;background:var(--sea2);border-radius:99px;overflow:hidden}
+.prog .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--mint),var(--sun));border-radius:99px;transition:width .4s}
+.prog span{font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums}
+
+/* character animation */
+.mc .bob{animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-4px)}}
+.mc .eyes{transform-origin:100px 112px;animation:blink 4.2s infinite}
+@keyframes blink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.08)}}
+.mc .mo{opacity:0}
+.mc.talking .mo{animation:mo .3s linear infinite}
+.mc.talking .mcl{animation:mcl .3s linear infinite}
+@keyframes mo{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes mcl{0%,49%{opacity:0}50%,100%{opacity:1}}
+.mc.talking .mc-img{animation:tb .32s ease-in-out infinite}
+@keyframes tb{50%{transform:translateY(-6px) scale(1.01)}}
+.mc.wow{animation:wow .6s ease}
+@keyframes wow{30%{transform:translateY(-18px) rotate(-3deg)}60%{transform:translateY(0) rotate(2deg)}}
+
+/* widgets */
+.wtitle{font-family:var(--display);font-size:24px;color:var(--sun)}
+.wsub{color:var(--mute);font-size:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.btn{background:var(--sea3);border:1px solid var(--line);padding:12px 18px;border-radius:14px;font-size:17px;font-weight:700}
+.btn.hot{background:var(--coral);border-color:var(--coral);color:#fff}
+.btn.sun{background:var(--sun);color:var(--ink);border-color:var(--sun)}
+.btn.sm{padding:8px 12px;font-size:14px}
+.hero{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:8px;flex:1;padding:10px}
+.hero .k{font-size:14px;letter-spacing:.2em;color:var(--mint);font-weight:700}
+.hero h1{font-family:var(--display);font-weight:400;font-size:clamp(34px,5vw,64px);line-height:1.1;margin:0;text-wrap:balance}
+.hero h1 em{font-style:normal;color:var(--coral)}
+.hero p{margin:0;color:var(--mute);font-size:18px}
+.agenda{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.agenda div{background:var(--sea);border-radius:14px;padding:10px 12px;border:1px solid var(--line)}
+.agenda div.brk{border-style:dashed;background:transparent}
+.agenda div.on{border-color:var(--sun)}
+.agenda b{display:block;font-family:var(--display);font-weight:400;font-size:19px}
+.agenda span{font-size:12px;color:var(--mute);font-variant-numeric:tabular-nums}
+.cellcard{border-radius:20px;padding:20px;background:var(--sea);border:2px solid var(--cc);display:flex;flex-direction:column;gap:12px}
+.cellcard h2{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(28px,4vw,44px);color:var(--cc)}
+.cellcard p{margin:0;color:var(--mute);font-size:16px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--sea3);border-radius:999px;padding:8px 14px;font-size:17px;font-weight:500;border:1px solid var(--line)}
+.chip.lead{background:var(--cc,var(--coral));color:var(--ink);font-weight:900}
+.chip.got{background:var(--mint);color:var(--ink)}
+.chip.pick{outline:3px solid var(--sun)}
+button.chip{cursor:pointer}
+.toasts{display:grid;gap:10px}
+.toast-opt{text-align:left;background:var(--sea);border:2px solid var(--line);border-radius:18px;padding:14px 18px;display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline}
+.toast-opt.on{border-color:var(--sun);background:var(--sea3)}
+.toast-opt .l{font-size:14px;color:var(--mute);width:100%}
+.toast-opt b{font-family:var(--display);font-weight:400;font-size:clamp(24px,3.2vw,40px)}
+.toast-opt b.r{color:var(--sun)}
+.timer{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.timer .big{font-family:var(--display);font-size:clamp(48px,8vw,104px);line-height:1;font-variant-numeric:tabular-nums;color:var(--mint)}
+.timer .big.end{color:var(--coral);animation:car 1s steps(1) infinite}
+.talk{background:var(--sea);border-radius:18px;padding:14px 18px;border:1px dashed var(--line);width:100%;text-align:left}
+.talk small{color:var(--mute);font-size:13px;display:block;margin-bottom:4px;letter-spacing:.06em}
+.talk b{font-family:var(--display);font-weight:400;font-size:22px}
+.talk .tease{margin:6px 0 0;color:var(--mute);font-size:17px}
+.shuf{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.shuf>div{background:var(--sea);border:2px solid var(--line);border-radius:18px;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.shuf>div.on{border-color:var(--cc)}
+.shuf .cl{font-size:14px;color:var(--cc)}
+.shuf .nm{font-family:var(--display);font-size:clamp(26px,3.4vw,38px);line-height:1.15}
+.shuf .to{font-size:16px;color:var(--sun);font-weight:700}
+.posebox{background:var(--sea);border-radius:18px;padding:14px;text-align:center;display:flex;flex-direction:column;gap:8px}
+.posebox .pose{font-family:var(--display);font-size:clamp(26px,3.6vw,42px);color:var(--sun)}
+.posebox .shot{font-size:clamp(40px,6vw,76px);min-height:1.1em;font-variant-numeric:tabular-nums}
+.flash{position:fixed;inset:0;background:#fff;z-index:65;pointer-events:none;animation:flash .6s ease-out forwards}
+@keyframes flash{from{opacity:.9}to{opacity:0}}
+.count.hand{font-size:clamp(44px,7vw,84px)}
+.nonq{font-family:var(--display);font-size:clamp(30px,4.4vw,54px);text-align:center;color:var(--sun);line-height:1.25;word-break:keep-all}
+.count.ud{font-size:clamp(48px,8vw,96px);min-height:1.1em;font-variant-numeric:tabular-nums}
+.udin{font-family:var(--display);font-size:30px;width:150px;padding:10px 12px;border-radius:14px;border:2px solid var(--sun);background:var(--sea);color:var(--foam);text-align:center}
+.cnt{display:grid;gap:6px}
+.cntrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--sea);border-left:6px solid var(--cc);border-radius:12px;padding:8px 10px}
+.cntrow b{min-width:84px;color:var(--cc);font-size:16px}
+.cntrow .done{margin-left:auto;color:var(--sun);font-weight:900}
+.btn:disabled{opacity:.4;cursor:default}
+.ox{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ox div{border-radius:22px;background:var(--sea);border:3px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:clamp(70px,10vw,120px);line-height:1.1;transition:.3s}
+.ox div.o{color:#5ec8ff}.ox div.x{color:var(--coral)}
+.ox div.win{border-color:var(--sun);background:var(--sea3);transform:scale(1.03)}
+.ox div.lose{opacity:.25}
+.explain{background:var(--foam);color:var(--ink);border-radius:16px;padding:12px 16px;font-size:18px;font-weight:500}
+.cho{font-family:var(--display);font-size:clamp(56px,9vw,110px);letter-spacing:.12em;text-align:center;color:var(--sun);line-height:1.15;word-break:keep-all}
+.cat{align-self:center;font-size:14px;background:var(--sea3);padding:4px 12px;border-radius:999px;color:var(--mute)}
+.ans{text-align:center;font-family:var(--display);font-size:clamp(30px,4.4vw,52px);color:var(--foam)}
+.hint{text-align:center;color:var(--mute);font-size:18px}
+.bal{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:stretch}
+.bal button{background:var(--sea);border:3px solid var(--line);border-radius:22px;padding:22px 16px;font-family:var(--display);font-size:clamp(22px,3vw,36px);line-height:1.3;word-break:keep-all;transition:.25s}
+.bal button.a{color:#5ec8ff}.bal button.b{color:var(--coral)}
+.bal button.win{border-color:var(--sun);background:var(--sea3)}
+.bal button.lose{opacity:.3}
+.bal .vs{align-self:center;font-family:var(--display);font-size:30px;color:var(--sun)}
+.slot{background:var(--sea);border-radius:22px;border:3px solid var(--sun);padding:18px;text-align:center;display:flex;flex-direction:column;gap:6px}
+.slot .nm{font-family:var(--display);font-size:clamp(40px,6vw,72px);line-height:1.1}
+.slot .cl{font-size:16px;color:var(--mute)}
+.mission{background:var(--foam);color:var(--ink);border-radius:20px;padding:16px 20px;font-family:var(--display);font-size:clamp(22px,3vw,34px);text-align:center;word-break:keep-all}
+.mission small{display:block;font-family:var(--body);font-size:13px;color:#8a5a00;font-weight:700;letter-spacing:.1em}
+.stand{display:grid;gap:8px}
+.stand .r{display:grid;grid-template-columns:36px 1fr auto;gap:12px;align-items:center;background:var(--sea);border-radius:14px;padding:10px 14px;border-left:6px solid var(--cc)}
+.stand .r b{font-family:var(--display);font-weight:400;font-size:22px}
+.stand .r .n{font-family:var(--display);font-size:28px;font-variant-numeric:tabular-nums;color:var(--sun)}
+.stand .r .k{font-family:var(--display);font-size:22px;color:var(--mute)}
+.pod{display:grid;gap:8px}
+.pod .r{transition:.4s}
+.pod .r.hide{filter:blur(10px);opacity:.35}
+.pod .r.first{background:var(--sun);color:var(--ink)}
+.pod .r.first .n,.pod .r.first .k{color:var(--ink)}
+.count{font-family:var(--display);font-size:clamp(110px,18vw,220px);text-align:center;line-height:1;color:var(--sun)}
+.info{display:grid;gap:8px}
+.info div{background:var(--sea);border-radius:14px;padding:12px 16px;display:grid;grid-template-columns:90px 1fr;gap:12px;font-size:17px}
+.info div b{color:var(--sun);font-weight:700}
+.bonus{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.bonus button{background:var(--sea);border:2px solid var(--cc);border-radius:16px;padding:14px;font-family:var(--display);font-size:20px;color:var(--cc)}
+
+/* overlays */
+.overlay{position:fixed;inset:0;background:rgba(6,20,32,.88);display:flex;align-items:center;justify-content:center;z-index:50;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.panel{background:var(--sea2);border:1px solid var(--line);border-radius:26px;padding:22px;width:min(560px,100%);max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:14px}
+.panel h3{margin:0;font-family:var(--display);font-weight:400;font-size:26px;color:var(--sun)}
+.srow{display:grid;grid-template-columns:1fr auto auto auto auto;gap:6px;align-items:center;background:var(--sea);border-radius:14px;padding:8px 10px;border-left:6px solid var(--cc)}
+.srow b{font-weight:700;font-size:16px;min-width:0}
+.srow .n{font-family:var(--display);font-size:28px;min-width:2.2ch;text-align:right;color:var(--sun);font-variant-numeric:tabular-nums}
+.menu-list{display:grid;gap:6px}
+.menu-list button{text-align:left;background:var(--sea);border-radius:12px;padding:12px 14px;font-size:16px;display:flex;justify-content:space-between;gap:10px}
+.menu-list button span{color:var(--mute);font-variant-numeric:tabular-nums}
+
+/* start */
+#start{position:fixed;inset:0;z-index:40;overflow:auto;background:var(--sea);background-image:radial-gradient(100% 70% at 70% 0%,#1d4a70 0%,transparent 65%)}
+.sw{max-width:1100px;margin:0 auto;padding-block:max(28px,env(safe-area-inset-top,0px)) 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:22px}
+.sw .k{color:var(--mint);font-weight:700;letter-spacing:.2em;font-size:13px}
+.sw h1{font-family:var(--display);font-weight:400;font-size:clamp(34px,5.4vw,62px);line-height:1.1;margin:4px 0 0;text-wrap:balance}
+.sw h1 em{font-style:normal;color:var(--coral)}
+.sw p{color:var(--mute);margin:0;font-size:16px;max-width:62ch}
+.picks{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.pick{background:var(--sea2);border:3px solid var(--line);border-radius:22px;padding:12px 12px 14px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.pick.on{border-color:var(--sun);background:var(--sea3)}
+.pick svg{width:100%;max-width:170px;height:auto}
+.pick b{font-family:var(--display);font-weight:400;font-size:24px}
+.pick span{font-size:13px;color:var(--mute)}
+.pick em{font-style:normal;font-size:12px;color:var(--sun)}
+.startrow{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.go{background:var(--sun);color:var(--ink);font-family:var(--display);font-size:28px;padding:14px 36px;border-radius:18px;box-shadow:0 5px 0 #c99a12}
+.chk{display:flex;align-items:center;gap:8px;font-size:16px;color:var(--foam)}
+.chk input{width:22px;height:22px}
+.panel.wide{width:min(760px,100%)}
+.fxlist{display:grid;gap:8px}
+.fxrow{display:grid;grid-template-columns:130px minmax(0,1fr) auto auto;gap:8px;align-items:center;background:var(--sea);border-radius:14px;padding:8px 10px}
+.fxrow b{font-size:15px}
+.fxrow select{background:var(--sea2);color:var(--foam);border:1px solid var(--line);border-radius:10px;padding:9px;font-size:15px;font-family:inherit;min-width:0;width:100%}
+.fxrow small{grid-column:2/-1;color:var(--mint);font-size:12px}
+@media (max-width:600px){.fxrow{grid-template-columns:minmax(0,1fr) auto auto}.fxrow b{grid-column:1/-1}.fxrow small{grid-column:1/-1}}
+.field{display:grid;gap:6px;font-size:16px}
+.field b{color:var(--sun);font-variant-numeric:tabular-nums}
+.field input[type=range]{width:100%;accent-color:var(--sun);height:28px}
+.field select{background:var(--sea);color:var(--foam);border:1px solid var(--line);border-radius:12px;padding:10px;font-size:16px;font-family:inherit;max-width:100%}
+#toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--foam);color:var(--ink);padding:10px 20px;border-radius:999px;font-weight:900;font-size:18px;z-index:60;transition:opacity .3s;pointer-events:none}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:70}
+
+@media (max-width:760px){
+  main{grid-template-columns:1fr;grid-template-rows:auto 1fr;gap:10px;overflow:auto}
+  .stage{flex-direction:row;align-items:center;justify-content:flex-start;gap:10px}
+  .stage .mcwrap{flex:none;width:110px;height:130px}
+  .bubble::before{left:30px;top:-16px;bottom:auto;border:10px solid transparent;border-bottom:18px solid var(--foam);border-top:0}
+  .brand span{display:none}
+  .next{padding:12px 26px;font-size:22px}
+  .nav{padding:10px 14px;font-size:18px}
+  .bal{grid-template-columns:1fr}
+  .info div{grid-template-columns:1fr;gap:2px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div id="start">
+  <div class="sw">
+    <div>
+      <div class="k">RISK ENGINEERING DEPT · 하반기 야유회</div>
+      <h1>노량진에서 <em>회 + 대게</em>로<br>리스크 제로, 행복 풀베팅!</h1>
+    </div>
+    <p>오늘의 사회자는 AI 헷지쌤! 「야유회 시작!」을 누르면 시작하고, 화면을 터치하거나 <b>다음</b> 버튼으로 진행됩니다.</p>
+    <div class="picks" id="picks"></div>
+    <div class="startrow">
+      <button class="go" id="goBtn">야유회 시작!</button>
+      <button class="btn" id="resumeBtn" hidden>이어서 진행</button>
+      <label class="chk"><input type="checkbox" id="ttsChk" checked> MC 목소리로 읽어주기</label>
+      <button class="btn" id="startSound">소리 설정 · 테스트</button>
+    </div>
+  </div>
+</div>
+
+<div class="app">
+  <header>
+    <div class="brand"><b>리스크공학부 야유회</b><span>노량진 수산시장 · 회 + 대게</span></div>
+    <nav class="rail" id="rail" aria-label="진행 순서"></nav>
+    <div class="hbtns">
+      <span class="tpill" id="tpill" hidden></span>
+      <button class="hbtn" id="soundBtn">소리</button>
+      <button class="hbtn" id="scoreBtn">점수판</button>
+      <button class="hbtn" id="menuBtn">메뉴</button>
+    </div>
+  </header>
+  <main>
+    <div class="stage">
+      <div class="mcwrap mc" id="mc"></div>
+      <div class="plate" id="plate"></div>
+    </div>
+    <div class="right">
+      <div class="bubble" id="bubble" role="button" tabindex="0" aria-live="polite"><span class="who">AI MC</span><span id="btext"></span></div>
+      <div class="widget" id="widget"></div>
+    </div>
+  </main>
+  <footer>
+    <button class="nav prev" id="prevBtn">이전</button>
+    <div class="prog"><div class="bar"><i id="pbar"></i></div><span id="ptext"></span></div>
+    <button class="nav next" id="nextBtn">다음 ▶</button>
+  </footer>
+</div>
+
+<div class="overlay" id="scoreOv" hidden><div class="panel"><h3>셀 대항 점수판</h3><div id="scoreList" style="display:grid;gap:8px"></div><div class="row"><button class="btn" data-close>닫기</button></div></div></div>
+<div class="overlay" id="menuOv" hidden><div class="panel"><h3>메뉴</h3><div class="menu-list" id="menuList"></div>
+  <div class="row">
+    <button class="btn sm" id="mImg">MC 이미지 직접 올리기</button>
+    <button class="btn sm" id="mTts">소리 설정</button>
+    <button class="btn sm" id="mFull">전체화면</button>
+    <button class="btn sm" id="mReset">점수 초기화</button>
+  </div>
+  <input type="file" id="imgIn" accept="image/*" hidden>
+  <div class="row"><button class="btn" data-close>닫기</button></div></div></div>
+<div class="overlay" id="soundOv" hidden><div class="panel"><h3>소리 설정</h3>
+  <label class="chk"><input type="checkbox" id="sTts"> MC 멘트를 목소리로 읽기</label>
+  <label class="chk"><input type="checkbox" id="sHq"> 고품질 AI 목소리 쓰기 (미리 녹음된 헷지쌤 목소리 · 추천)</label>
+  <div class="field"><label for="sVol">MC 목소리 크기 <b id="sVolT"></b></label><input type="range" id="sVol" min="0" max="1" step="0.05"></div>
+  <div class="field"><label for="sRate">말하는 속도 <b id="sRateT"></b></label><input type="range" id="sRate" min="0.8" max="1.4" step="0.05"></div>
+  <div class="field"><label for="sPitch">목소리 톤 <b id="sPitchT"></b></label><input type="range" id="sPitch" min="0.8" max="1.3" step="0.05"></div>
+  <div class="field"><label for="sVoice">목소리 종류 (⭐가 가장 자연스러워요)</label><select id="sVoice"></select>
+    <p class="wsub" id="sVoiceHint" style="margin:0" hidden>이 기기에는 기본 음성만 있어서 기계음처럼 들릴 수 있어요. 아이패드는 설정 → 손쉬운 사용 → 읽기 및 말하기 → 음성 → 한국어에서 「유나(프리미엄)」를 내려받고, 갤럭시탭은 설정 → 일반 → 텍스트 음성 변환에서 Google 엔진과 한국어 음성 데이터를 설치하면 훨씬 자연스러워져요.</p></div>
+  <div class="field"><label for="sSfx">예능 효과음 크기 (팡파레·드럼롤·띵동) <b id="sSfxT"></b></label><input type="range" id="sSfx" min="0" max="1" step="0.05"></div>
+  <label class="chk"><input type="checkbox" id="sBgm"> 배경음악 깔기 (MC가 말할 땐 자동으로 작아져요)</label>
+  <div class="field"><label for="sBgmV">배경음악 크기 <b id="sBgmT"></b></label><input type="range" id="sBgmV" min="0" max="1" step="0.05"></div>
+  <p class="wsub" style="margin:0">목소리는 태블릿의 <b>미디어 볼륨</b>을 따릅니다. 다른 앱으로 음악을 틀고 있다면 그 앱의 볼륨을 낮춰 주세요. 목소리가 안 나오면 태블릿 설정에서 한국어 TTS(음성 출력)를 설치해 주세요.</p>
+  <div class="row"><button class="btn sun" id="sTest">목소리 테스트</button><button class="btn hot" id="fxPick">효과음 고르기</button><button class="btn" data-close>닫기</button></div></div></div>
+<div class="overlay" id="fxOv" hidden><div class="panel wide"><h3>효과음 고르기</h3>
+  <p class="wsub" style="margin:0">효과음마다 ▶로 들어보고 마음에 드는 버전을 고르세요. 진짜 녹음된 팡파레를 쓰고 싶다면 「내 파일」로 MP3를 올리면 돼요. 무료 효과음은 Pixabay 효과음(pixabay.com/sound-effects)에서 "fanfare", "drum roll"로 검색해 받을 수 있어요. 올린 파일은 이 기기의 이 브라우저에만 저장돼요.</p>
+  <div id="fxList" class="fxlist"></div>
+  <input type="file" id="fxFile" accept="audio/*" hidden>
+  <div class="row"><button class="btn" id="fxBack">소리 설정으로</button><button class="btn" data-close>닫기</button></div></div></div>
+<div id="toast" style="opacity:0"></div>
+<canvas id="fx"></canvas>
+
+<script>
+/* ---------------- 데이터 ---------------- */
+const HEAD = '전효진 부장님';
+const CELLS = [
+  {n:'운영리스크Cell', s:'운영리스크', c:'#ff6a4d', lead:'이상철 Cell장님', m:['김소라 팀장님','오준상 프로님','박진희 프로님','이송아 프로님'], slogan:'은행의 모든 사고를 미리 막아주는 든든한 방패'},
+  {n:'고객자산리스크Cell', s:'고객자산', c:'#ffcf3a', lead:'정지석 Cell장님', m:['이병훈 팀장님','권용근 팀장님','장하영 프로님','양귀재 프로님'], slogan:'고객의 소중한 자산을 지키는 철벽 수비대'},
+  {n:'ALM Cell', s:'ALM', c:'#3fd0b0', lead:'이정화 Cell장님', m:['이철주 팀장님','최명준 팀장님','김현수 프로님'], slogan:'금리와 유동성, 은행의 균형을 잡는 밸런스 장인'},
+  {n:'시장미들 Cell', s:'시장미들', c:'#5aa9ff', lead:'김경환 Cell장님', m:['이인범 팀장님','황지은 팀장님','김소희 프로님','박창현 프로님'], slogan:'숫자 하나도 놓치지 않는 매의 눈'},
+  {n:'시장리스크 Cell', s:'시장리스크', c:'#b38cff', lead:'임현수 Cell장님', m:['나유라 팀장님','이현국 팀장님','박새한 팀장님','김지선 팀장님'], slogan:'시장이 흔들려도 절대 흔들리지 않는 강철 멘탈'},
+];
+const PEOPLE = [{name:HEAD, cell:-1}];
+CELLS.forEach((c,i)=>[c.lead,...c.m].forEach(n=>PEOPLE.push({name:n,cell:i})));
+
+const CHARS = [
+  {id:'hedge', name:'헷지쌤', tag:'헤드셋 · 곱슬머리 · 네모 안경', desc:'텐션 만렙 레크 강사', hair:'curly', hc:'#1f1a17', gc:'#111111', shirt:'#21b07a', acc:'headset'},
+]
+
+const SECTIONS = [
+  {k:'open', t:'오프닝', d:'10분'},
+  {k:'toast', t:'말씀 · 건배', d:'10분'},
+  {k:'b1', t:'식사 타임', d:'자율', brk:1},
+  {k:'seat1', t:'자리 바꾸기 ①', d:'5분'},
+  {k:'g1', t:'OX 퀴즈', d:'15분'},
+  {k:'b2', t:'쉬는 시간', d:'자율', brk:1},
+  {k:'seat2', t:'자리 바꾸기 ②', d:'5분'},
+  {k:'g2', t:'초성 퀴즈', d:'10분'},
+  {k:'g3', t:'반전 가위바위보', d:'10분'},
+  {k:'b3', t:'자유 시간', d:'자율', brk:1},
+  {k:'seat3', t:'자리 바꾸기 ③', d:'5분'},
+  {k:'g4n', t:'넌센스 퀴즈', d:'10분'},
+  {k:'g4', t:'운명의 룰렛', d:'15분'},
+  {k:'end', t:'시상 · 마무리', d:'15분'},
+];
+
+const TOASTS = [
+  {l:'장소 맞춤형', a:'오늘은!', b:'대~게 좋다!'},
+  {l:'리스크공학부 맞춤형', a:'리스크는 헷지!', b:'우정은 풀베팅!'},
+  {l:'끈끈함 강조형', a:'우리 우정!', b:'한도 무제한!'},
+];
+const OX = [
+  {q:'대게는 몸집이 커서 「대게」라고 부른다!', a:'X', e:'다리가 대나무(竹)처럼 곧고 마디가 있어서 대게라고 불러요.'},
+  {q:'대게 다리는 집게다리까지 모두 합쳐 10개다!', a:'O', e:'집게다리 2개 + 걷는 다리 8개 = 10개! 오늘 직접 세어 보세요.'},
+  {q:'킹크랩은 생물학적으로 대게보다 소라게(집게) 쪽에 더 가깝다!', a:'O', e:'킹크랩은 집게류에 속해요. 그래서 겉으로 보이는 다리도 8개뿐이랍니다.'},
+  {q:'배를 아래로 놓고 봤을 때 눈이 왼쪽에 몰려 있으면 광어다!', a:'O', e:'그 유명한 「좌광우도」! 왼쪽은 광어, 오른쪽은 도다리.'},
+  {q:'연어는 바다에서 태어나 강으로 올라가 알을 낳는다!', a:'X', e:'강에서 태어나 바다에서 자란 뒤, 태어난 강으로 돌아와 알을 낳아요.'},
+  {q:'신뢰수준 99% 1일 VaR가 100억이면, 100일 중 하루 정도는 손실이 100억을 넘을 수 있다는 뜻이다!', a:'O', e:'99% 신뢰수준이니 1% 확률, 즉 100일에 하루 꼴로 VaR를 넘는 손실이 날 수 있어요.'},
+  {q:'다른 조건이 같다면, 듀레이션이 긴 채권일수록 금리 변화에 덜 민감하다!', a:'X', e:'듀레이션이 길수록 금리 변화에 더 민감해요. ALM Cell 여러분, 웃고 계시죠?'},
+  {q:'바젤 규제의 「바젤」은 스위스의 도시 이름이다!', a:'O', e:'바젤은행감독위원회가 있는 국제결제은행(BIS) 본부가 스위스 바젤에 있어요.'},
+];
+const CHO = [
+  {c:'ㅅㅌㄹㅅ ㅌㅅㅌ', a:'스트레스 테스트', cat:'리스크 용어', h:'최악의 시나리오를 가정하고 버텨보는 시험'},
+  {c:'ㄴㄹㅈ ㅅㅅㅅㅈ', a:'노량진 수산시장', cat:'오늘의 장소', h:'지금 우리가 앉아 있는 곳!'},
+  {c:'ㄷㄹㅇㅅ', a:'듀레이션', cat:'리스크 용어', h:'채권 가격의 금리 민감도, ALM Cell의 단골 단어'},
+  {c:'ㅋㅋㄹ', a:'킹크랩', cat:'수산시장', h:'대게의 덩치 큰 사촌(사실은 소라게 쪽)'},
+  {c:'ㅇㅇㄹㅅㅋ', a:'운영리스크', cat:'우리 부서', h:'사람·시스템·프로세스에서 생기는 위험'},
+  {c:'ㅇㄷㅅ', a:'유동성', cat:'리스크 용어', h:'필요할 때 바로 현금을 마련할 수 있는 능력'},
+  {c:'ㅊㄱㅊㅈ', a:'초고추장', cat:'수산시장', h:'회의 영원한 단짝 소스'},
+  {c:'ㅁㄷㅇㅍㅅ', a:'미들오피스', cat:'리스크 용어', h:'프론트와 백 사이, 시장미들 Cell의 그곳'},
+  {c:'ㅈㄱㅈ ㅈㄱ', a:'자기자본 비율', cat:'리스크 용어', h:'바젤 규제의 핵심, BIS ○○○○ ○○'},
+  {c:'ㄴㄷㅅ', a:'노들섬', cat:'오늘의 2차', h:'한강 한가운데, 오늘 2차 장소!'},
+];
+const NON = [
+  {q:'세상에서 가장 빠른 닭은?', a:'후다닭', h:'「후다닥」 달려가는 닭!'},
+  {q:'물고기 중에서 학벌이 제일 좋은 물고기는?', a:'고등어', h:'학교 이름 같은 생선!'},
+  {q:'왕이 넘어지면?', a:'킹콩', h:'왕은 영어로 King, 넘어지면 「쿵」…'},
+  {q:'세상에서 가장 쉬운 숫자는?', a:'190,000 (십구만 → 쉽구만!)', h:'소리 내서 읽어보세요'},
+  {q:'소가 웃으면?', a:'우하하', h:'소는 한자로 우(牛)'},
+  {q:'오리가 얼면?', a:'언덕', h:'오리는 영어로 duck'},
+  {q:'깨가 죽으면?', a:'주근깨', h:'죽은 깨…'},
+  {q:'세상에서 가장 뜨거운 바다는?', a:'열바다 (열받아!)', h:'화날 때 하는 말'},
+  {q:'자동차가 놀라면?', a:'카놀라유', h:'자동차는 Car, 놀라~'},
+  {q:'딸기가 회사에서 잘리면?', a:'딸기시럽 (딸기 실업!)', h:'직장을 잃으면 ○○'},
+];
+const MISSIONS = [
+  '오른쪽에 앉은 분 칭찬 3가지!',
+  '우리 셀의 숨은 MVP와 그 이유는?',
+  '입사 후 가장 기억에 남는 순간, 15초 토크!',
+  '지금 앞에 있는 회 한 점, 먹방 리액션!',
+  '리스크공학부를 한 단어로 표현한다면?',
+  '내 셀장님 말투로 「오늘 회식 아주 좋네요」 한마디!',
+  '하반기의 나에게 주는 상, 상 이름을 지어주세요!',
+  '올해 남은 두 달, 꼭 이루고 싶은 목표 한 문장!',
+  '다른 셀 한 분을 지목해서 하이파이브 + 덕담 한마디!',
+  '요즘 푹 빠져 있는 것 하나 소개하기!',
+  '노들섬 2차 멤버 모집 연설, 10초!',
+  '오늘 MC에게 한 줄 평가 해주기! (순한 맛으로요)',
+];
+
+/* ---------------- 장면(대본) ---------------- */
+const SC = [];
+const add = (s,t,w,m) => SC.push({s,t,w,m});
+// 대사 속 [효과음] 표시: 팡파레·띵동·드럼롤·건배·띠용·딩동댕·휘익·찰칵·짜잔·땡 (+로 겹치기). 말이 이어지는 곳엔 넣지 않고, 포인트가 되는 순간에만
+add('open','여러분 안녕하세요~! 리스크공학부 하반기 야유회에 오신 것을 진심으로 환영합니다! [팡파레] 오늘 사회를 맡은, AI 헷지쌤입니다~! [짜잔] 사실 오늘이 제 첫 MC 데뷔 무대인데요… 많이 떨립니다. [띠용] 제 첫 데뷔를 위해, 큰 박수 한번 부탁드려요~! [팡파레]',{type:'hero'},'wow');
+add('open','네, 맞아요. 사람 아니고 AI입니다! [띠용] 리스크공학부 최초의 AI 사회자인데요, 장점이 뭐냐고요? 출연료 0원, 식대 0원, 대게도 안 먹습니다! [짜잔] 그러니까 오늘 제 몫까지 여러분이 다 드세요~ 동의하시면 박수 한번! [팡파레]');
+add('open','대신 단점이 하나 있어요. 술을 못 마십니다… [띠용] 그러니까 건배는 여러분이 제 몫까지 두 배로 해주시고요, 그 대신 점수 계산은 정확하게, 룰렛은 공정하게 하겠습니다. 편애는 0%! [팡파레]');
+add('open','상반기엔 여의도 한강에서 유람선 타고 강바람 맞았죠? 하반기엔 한 단계 업그레이드해서, 강을 넘어 바다로 왔습니다! [휘익] 오늘 회 좋아하시는 분, 손 한번 들어볼까요? 대게 좋아하시는 분도요! [띵동] 역시, 오늘 장소 선정은 완벽하네요. 노량진 수산시장, 회와 대게로 달려봅시다! 다 같이 박수~! [팡파레]');
+add('open','오늘의 진행 순서입니다. 이야기는 짧게, 먹는 건 길게! 그리고 중간중간… 깜짝 자리 바꾸기가 세 번 있습니다! [띠용]',{type:'agenda'});
+add('open','오늘은 셀 대항전이에요. 게임마다 점수가 쌓이고, 우승 셀에게는 영광의 상이 기다리고 있습니다! [팡파레] 점수는 화면 위 「점수판」에서 언제든 확인하실 수 있어요. 자, 셀 대항전 준비되셨으면 박수 세 번! [짜잔]',{type:'stand'});
+add('open','그럼 출석 체크 들어갈게요! 오늘은 셀이 다 섞여 앉아 계시죠? 그래서 준비했습니다. 「우리 셀 어디 있니?」 손 번쩍 출석! [짜잔] 셀 이름이 불리면 그 셀원들만 자리에서 손을 번쩍! 원하시면 살짝 일어나셔도 돼요. 제일 빨리, 제일 높이 손 든 셀에 보너스 3점 드립니다! [팡파레]',{type:'rules',items:['셀 이름이 불리면 그 셀원들만 손 번쩍 (살짝 일어나도 OK)','같은 셀끼리 멀리서 눈인사 + 손 흔들기','제일 빨리, 제일 높이 손 든 셀은 부장님이 판정 (+3점)']},'wow');
+const ORD = ['첫 번째','두 번째','세 번째','네 번째','마지막 다섯 번째'];
+CELLS.forEach((c,i)=>add('open',`${ORD[i]}! ${c.n}! [팡파레] ${c.lead}, ${c.m.join(', ')}! 손 번쩍 들어주세요~ [띵동] 와~ 여기저기 골고루 퍼져 계시네요! ${c.slogan}, 같은 셀끼리 손 한번 흔들어 주시고, 다 같이 응원의 박수~! [짜잔]`,{type:'cell',i},'wow'));
+add('open','자, 제일 빨리, 제일 높이 손 든 셀은 어디였나요? [드럼롤] 부장님께서 골라주시면, 해당 셀을 눌러 3점 드릴게요!',{type:'bonus',p:3});
+add('open',`그리고 오늘의 주인공! [드럼롤] 리스크공학부를 이끌어 주시는 ${HEAD}! [팡파레] 다 같이 뜨거운 박수와 환호 부탁드립니다~!`,{type:'boss'},'wow');
+add('toast',`그럼 본격적인 시작에 앞서, ${HEAD}께 오늘을 여는 한 말씀 청해 듣겠습니다. 큰 박수로 모셔볼게요~! [팡파레]`,{type:'speech'},'wow');
+add('toast','부장님, 좋은 말씀 감사합니다! 좋은 말씀 해주신 부장님께 다시 한번 큰 박수! [팡파레] 이어서 건배사까지 부탁드려도 될까요? 리스크공학부 맞춤 건배사 세 가지를 준비했어요. 마음에 드는 걸 골라주세요! [짜잔]',{type:'toast'});
+add('toast','자, 부장님 건배사에는 우렁찬 후창으로 호응해 주셔야 합니다! 다 같이 잔을 채워주세요! 부장님이 선창하시면 우리는 후창! 준비… 시작! [드럼롤]',{type:'toast',big:1},'wow');
+add('b1','[건배] 건배 완료! [팡파레] 멋진 건배사 해주신 부장님께 박수~! 오늘 상차림 보셨어요? 싱싱한 회에 대게까지 한 상 가득! [짜잔] 회는 마르기 전에, 대게는 식기 전에 얼른 드셔야죠. 편하게 맛있게 드시고, 이따 다시 돌아올게요. 살짝 예고하자면… [드럼롤] 돌아오는 순간, 누군가는 자리를 옮기게 됩니다! [띠용] 그리고 대게와 바젤이 한 문제에 같이 나오는 OX 퀴즈까지, 기대하세요~',{type:'timer',next:'자리 바꾸기 ① + OX 퀴즈',teaser:'운명의 자리 바꾸기 + 셀 대항 OX 퀴즈',hint:'미리 생각해 보세요. 대게 다리는 모두 몇 개일까요?'});
+add('seat1','회랑 대게, 맛있게 드시고 계신가요? 예고해 드린 대로, 운명의 자리 바꾸기 첫 번째 시간입니다! [휘익+팡파레] 서로 다른 셀에서 4명을 무작위로 뽑을 거고요, 뽑힌 분들은 화살표대로 이동해 주시면 됩니다.',{type:'shuffle',round:1},'wow');
+add('g1','새 자리 적응 완료! 첫 번째 게임, OX 서바이벌입니다! [팡파레] 먼저 모두 손 번쩍 들어주세요! 문제가 나오면 각자 손으로 O 또는 X를 만들고, 틀리면 손 내리고 탈락! [띠용] 마지막까지 살아남으신 분 한 명당 소속 셀에 2점씩 드립니다! [딩동댕]',{type:'rules',items:['시작할 때 모두 손 들고 참여','문제마다 각자 O (머리 위 동그라미) 또는 X (가슴 앞 엑스) · 틀리면 손 내리고 탈락','8문제 후 끝까지 살아남은 분 이름을 누르면 1명당 소속 셀 +2점','모두 탈락하면 「패자부활전」으로 다시 전원 참여']},'wow');
+OX.forEach((q,i)=>add('g1',`[띵동] ${i+1}번 문제! ${i===0?'모두':'살아남은 분들만'} 참여하세요! ${q.q} O일까요, X일까요? [드럼롤]`,{type:'ox',...q}));
+add('g1','OX 서바이벌 끝! [드럼롤] 마지막까지 살아남으신 분들, 자리에서 일어나 주세요! [팡파레] 와~ 최후의 생존자들께 큰 박수! 화면에서 생존자 이름을 누르면 그 셀에 2점씩 들어갑니다!',{type:'survivors'},'wow');
+add('g1','OX 서바이벌 끝! [팡파레] 끝까지 버텨주신 모든 분들, 리스크 전문가다운 촉이었어요. 스스로에게 박수~! 현재 점수 한번 볼까요? 아직 역전의 기회는 충분합니다!',{type:'stand'});
+add('b2','OX 서바이벌로 머리 많이 쓰셨죠? 잠깐 쉬어가는 시간입니다! [팡파레] 대게 앞에서는 다들 말이 없어지던데요… 아직 대게 남으신 분들, 지금이 발골 찬스예요! [띠용] 새 자리 이웃과 이야기도 나누시면서 편하게 드시고요. 다녀와서는 두 번째 자리 바꾸기, 그리고 리스크 용어 초성 퀴즈가 기다리고 있어요! [짜잔] 손 빠른 셀이 이기니까, 미리 손 풀어두세요~',{type:'timer',next:'자리 바꾸기 ② + 초성 퀴즈',teaser:'자리 바꾸기 ② + 리스크 초성 퀴즈',hint:'맛보기 문제! ㄹㅅㅋ ㄱㅎㅂ … 정답은 바로 우리 부서!'});
+add('seat2','배 좀 든든하게 채우셨나요? 두 번째 자리 바꾸기 시간입니다! [휘익+팡파레] 이번엔 누가 움직일까요? 새 자리 이웃과 짠 한번 하시고, 초성 퀴즈로 갑니다! [건배]',{type:'shuffle',round:2},'wow');
+add('g2','자, 손은 살짝 닦으시고~ 두 번째 게임, 초성 퀴즈! [팡파레] 정답 아는 분은 손 번쩍 들고 외쳐주세요. 맞힌 분의 셀에 1점입니다!',{type:'rules',items:['정답을 아는 사람은 누구든 손 들고 외치기','막히면 「힌트 보기」로 힌트 공개','맞힌 분의 셀을 눌러 1점!']},'wow');
+CHO.forEach((q,i)=>add('g2',`[띵동] ${i+1}번 문제, ${q.cat}! 정답 아시는 분 손 번쩍! [드럼롤]`,{type:'cho',...q}));
+add('g3','초성 퀴즈 끝! [팡파레] 세 번째 게임은 AI MC와 함께하는 반전 가위바위보! [짜잔] 그냥 가위바위보가 아니에요. 라운드마다 미션이 바뀝니다. 저를 이겨야 할 때도 있고, 져야 할 때도 있고, 저랑 똑같이 내야 할 때도 있어요! [띠용] 미션에 실패하면 손 내리고 탈락, 최후의 1인이 속한 셀에 3점! [딩동댕]',{type:'rules',items:['모두 손 들고 준비 · 라운드마다 미션이 바뀌어요','이겨라! = MC를 이긴 사람 생존 · 져라! = MC한테 진 사람 생존 · 비겨라! = MC와 같은 걸 낸 사람 생존','미션 실패하면 손 내리기 · 최후의 1인 셀 +3점']},'wow');
+add('g3','모두 손 준비! [드럼롤] 「가위바위보!」를 누르면 이번 라운드 미션이 나오고, 제가 바로 냅니다!',{type:'rps2'});
+add('g3','반전 가위바위보 끝! 머리랑 손이 따로 노는 분들 많으셨죠? [띠용] 끝까지 살아남으신 분께 큰 박수~! 지금 점수는 이렇습니다! [팡파레]',{type:'stand'});
+add('b3','한바탕 신나게 놀았으니 잠깐 쉬어갈까요? 자유 시간입니다! 다른 셀 테이블에 가서 한 잔 나누셔도 좋아요. [건배] 다녀오시면… [드럼롤] 마지막 자리 바꾸기, 아재개그 넌센스 퀴즈, 그리고 오늘의 하이라이트 운명의 룰렛이 기다립니다! [팡파레] 누가 뽑힐지는 저도 몰라요. 진짜로요!',{type:'timer',next:'자리 바꾸기 ③ + 운명의 룰렛',teaser:'자리 바꾸기 ③ + 넌센스 퀴즈 + 운명의 룰렛',hint:'24명 중 단 한 명… 그 주인공은 바로 당신일 수도?'});
+add('seat3','돌아오신 걸 환영합니다! 마지막 자리 바꾸기예요! [휘익+팡파레] 오늘 가장 많이 섞인 테이블은 어디일까요? 자, 뽑습니다!',{type:'shuffle',round:3},'wow');
+add('g4n','새 자리 적응 완료! [팡파레] 이번엔 머리를 말랑말랑하게 풀어볼까요? 아재개그 넌센스 퀴즈입니다! [짜잔] 정답 아는 분은 손 번쩍 들고 외쳐주세요. 맞힌 분의 셀에 1점! 대신 너무 썰렁해도 화내기 없기~ [띠용]',{type:'rules',items:['정답 아는 사람은 누구든 손 들고 외치기','막히면 「힌트 보기」','맞힌 분의 셀을 눌러 1점!']},'wow');
+NON.forEach((q,i)=>add('g4n',`[띵동] ${i+1}번 문제! ${q.q} [드럼롤]`,{type:'non',...q}));
+add('g4n','넌센스 퀴즈 끝! 썰렁했지만 재밌으셨죠? [띠용] 썰렁한 문제 끝까지 맞혀주신 여러분께 박수! 이제 오늘의 하이라이트로 갑니다! [팡파레]',{type:'stand'});
+add('g4','이제 오늘의 하이라이트, 운명의 룰렛! [팡파레] 제가 무작위로 한 분, 미션도 무작위로 뽑을게요. 성공하면 소속 셀에 2점! 패스도 되지만… 셀 점수 1점이 빠집니다! [땡]',{type:'rules',items:['룰렛이 한 분 + 미션 하나를 뽑아요','성공하면 소속 셀 +2점','패스하면 소속 셀 -1점 (부장님은 원하는 셀에 2점 선물!)']},'wow');
+add('g4','자, 룰렛 돌립니다! 아래 「룰렛 돌리기」를 눌러주세요. 몇 번 돌릴지는 분위기 보면서 정하시면 돼요! [짜잔]',{type:'roulette'});
+add('end','자, 이제 운명의 시간! [드럼롤] 최종 순위를 공개합니다! 공개 전에, 오늘 열심히 달려주신 모든 셀에 박수 한번! 「순위 공개」를 한 번씩 눌러주세요.',{type:'podium'},'wow');
+add('end','우승 셀 축하드립니다! [팡파레] 우승 셀에 축하의 박수와 환호 부탁드려요~! 상품은 부장님께서 직접 수여해 주시겠습니다. 그리고 특별상 「오늘의 리액션 왕」은… [드럼롤] 부장님이 직접 지명해 주세요!',{type:'stand'});
+add('end','이렇게 좋은 날 단체사진 빠질 수 없죠! 다 같이 모여주세요. 제가 카운트다운 할게요! [짜잔]',{type:'count'},'wow');
+add('end','2차 안내드립니다! 원하시는 분들은 노들섬으로 이동해서 한강 야경과 함께 2라운드! [팡파레] 물론 1차에서 마무리하셔도 전혀 괜찮아요.',{type:'info',rows:[['이동','노량진 수산시장 → 노들섬, 택시로 10분 안팎 (한강대교 위)'],['즐길 거리','잔디마당 산책, 한강 야경 구경, 편의점 음료와 함께 수다'],['참여','원하는 분만 자유롭게! 귀가길 꼭 조심하세요']]});
+add('end','오늘 리스크공학부의 즐거움은 한도 초과! [팡파레] 우리 우정은 헷지 불가! [팡파레] 이 정도 익스포저는 보고 안 하셔도 됩니다~ [띠용] 오늘 함께해 주신 여러분, 그리고 오늘을 준비해 주신 분들께 큰 박수 부탁드립니다! 제 첫 데뷔 무대, 여러분 덕분에 정말 행복했어요. 지금까지 AI 헷지쌤이었습니다. 모두 감사합니다! [팡파레]',{type:'hero',end:1},'wow');
+
+/* ---------------- 상태 ---------------- */
+const LS = {get(k,d){try{const v=localStorage.getItem('rmc_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}}, set(k,v){try{localStorage.setItem('rmc_'+k,JSON.stringify(v))}catch(e){}}};
+let idx = LS.get('idx',0); if(!(idx>=0&&idx<SC.length)) idx=0;
+let scores = LS.get('scores',[0,0,0,0,0]);
+let charId = 'hedge';
+let tts = LS.get('tts',true);
+let vol = LS.get('vol',1), rate = LS.get('rate2',1), pitch = LS.get('pitch',1), sfxVol = LS.get('sfxv2',0.5), voiceName = LS.get('voice','');
+let customImg = LS.get('img',null);
+let toastPick = LS.get('toast',0);
+let picked = new Set(LS.get('picked',[]));
+let moved = new Set(LS.get('moved',[]));
+let audio=null;
+const $ = s=>document.querySelector(s);
+const el = (tag,cls,html)=>{const e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e;};
+const curChar = ()=>CHARS.find(c=>c.id===charId)||CHARS[0];
+const josa=(w,a,b)=>{ const c=w.charCodeAt(w.length-1)-0xAC00; return w+((c>=0&&c<=11171&&c%28)?a:b); };
+const fmt = t=>t.replaceAll('{mc가}',josa(curChar().name,'이','가')).replaceAll('{mc}',curChar().name);
+
+/* ---------------- 캐릭터 SVG ---------------- */
+function svgChar(c){
+  const S='#ffe1c9', H=c.hc, G=c.gc;
+  const bobFront=`<path d="M38 110 Q34 38 100 36 Q166 38 162 110 Q152 84 132 74 Q120 92 100 86 Q80 94 68 78 Q50 88 38 110Z" fill="${H}"/>`;
+  const shortBack=`<path d="M40 104 Q36 34 100 32 Q164 34 160 104Z" fill="${H}"/>`;
+  const shortFront=`<path d="M38 104 Q34 32 100 32 Q166 32 162 104 Q158 80 142 70 Q120 82 98 74 Q74 84 58 72 Q44 84 38 104Z" fill="${H}"/>`;
+  let back='',front='',over='';
+  if(c.hair==='bob'){back=`<path d="M34 112 Q30 34 100 32 Q170 34 166 112 L168 162 Q150 170 140 158 L142 112 L58 112 L60 158 Q50 170 32 162Z" fill="${H}"/>`;front=bobFront;}
+  if(c.hair==='short'){back=shortBack;front=shortFront;}
+  if(c.hair==='twin'){back=`<circle cx="30" cy="136" r="24" fill="${H}"/><circle cx="170" cy="136" r="24" fill="${H}"/>`+shortBack;front=bobFront;over=`<circle cx="46" cy="120" r="6" fill="#ff6a4d"/><circle cx="154" cy="120" r="6" fill="#ff6a4d"/>`;}
+  if(c.hair==='curly'){let s='';for(let k=0;k<=12;k++){const a=Math.PI*(0.95+k*1.1/12);s+=`<circle cx="${(100+64*Math.cos(a)).toFixed(1)}" cy="${(104+64*Math.sin(a)).toFixed(1)}" r="20" fill="${H}"/>`;}
+    back=s+`<circle cx="40" cy="138" r="16" fill="${H}"/><circle cx="160" cy="138" r="16" fill="${H}"/>`;
+    front=[[60,72],[79,60],[100,56],[121,60],[140,72]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="17" fill="${H}"/>`).join('');}
+  if(c.hair==='pony'){back=`<path d="M150 56 Q206 60 192 150 Q184 174 168 160 Q186 120 154 88Z" fill="${H}"/>`+shortBack;front=shortFront;}
+  const round=c.acc!=='bowtie'&&c.acc!=='headset';
+  const lens = round
+    ? `<circle cx="78" cy="112" r="17"/><circle cx="122" cy="112" r="17"/>`
+    : `<rect x="59" y="99" width="38" height="28" rx="9"/><rect x="103" y="99" width="38" height="28" rx="9"/>`;
+  const glasses=`<g fill="rgba(255,255,255,.3)" stroke="${G}" stroke-width="4">${lens}</g>
+    <path d="M96 110 Q100 105 104 110" stroke="${G}" stroke-width="4" fill="none"/>
+    <path d="M60 108 L42 104 M140 108 L158 104" stroke="${G}" stroke-width="3.5"/>
+    <path d="M67 107 L73 101 M111 107 L117 101" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".85"/>`;
+  let acc='';
+  if(c.acc==='mic') acc=`<path d="M152 240 L139 176" stroke="#2b2f36" stroke-width="10" stroke-linecap="round"/><circle cx="137" cy="166" r="13" fill="#9aa3ad" stroke="#5f6873" stroke-width="2"/><path d="M128 162 H146 M128 168 H146" stroke="#5f6873" stroke-width="1.5"/><circle cx="148" cy="214" r="12" fill="${S}"/>`;
+  if(c.acc==='bowtie') acc=`<path d="M100 194 L82 184 L82 204Z M100 194 L118 184 L118 204Z" fill="#ff6a4d"/><circle cx="100" cy="194" r="5" fill="#d94b30"/>`;
+  if(c.acc==='crab') acc=`<path d="M44 84 Q100 18 156 84" stroke="#e5533d" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M76 38 L64 46 M78 43 L68 54 M124 38 L136 46 M122 43 L132 54 M74 32 L66 29 M126 32 L134 29 M92 24 L90 13 M108 24 L110 13" stroke="#b83a26" stroke-width="3" stroke-linecap="round"/>
+    <g fill="#e5533d" stroke="#b83a26" stroke-width="2"><ellipse cx="100" cy="34" rx="26" ry="15"/><circle cx="60" cy="28" r="11"/><circle cx="140" cy="28" r="11"/></g>
+    <path d="M56 22 L62 28 M144 22 L138 28" stroke="#b83a26" stroke-width="2.5"/>
+    <circle cx="90" cy="11" r="4.5" fill="#fff"/><circle cx="110" cy="11" r="4.5" fill="#fff"/><circle cx="90" cy="12" r="2" fill="#222"/><circle cx="110" cy="12" r="2" fill="#222"/>
+    <path d="M94 38 Q100 43 106 38" stroke="#7a2e1f" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+  if(c.acc==='headset') acc=`<path d="M34 112 Q30 24 100 24 Q170 24 166 112" stroke="#23272e" stroke-width="8" fill="none"/><rect x="24" y="96" width="18" height="32" rx="8" fill="#23272e"/><rect x="158" y="96" width="18" height="32" rx="8" fill="#23272e"/><path d="M34 126 Q42 156 76 152" stroke="#23272e" stroke-width="4" fill="none"/><circle cx="78" cy="152" r="6" fill="#ff6a4d"/>`;
+  if(c.acc==='whistle') acc=`<path d="M84 186 Q100 222 116 186" stroke="#ffcf3a" stroke-width="3" fill="none"/><rect x="90" y="214" width="22" height="12" rx="6" fill="#d9dee5" stroke="#8a95a3" stroke-width="1.5"/><circle cx="96" cy="220" r="3" fill="#8a95a3"/>
+    <path d="M142 48 L124 36 L126 60Z M142 48 L160 34 L160 60Z" fill="#ff7eb6"/><circle cx="142" cy="48" r="6" fill="#ff4f9a"/>`;
+  return `<svg class="mc-svg" viewBox="0 0 200 250" role="img" aria-label="${c.name} 캐릭터" xmlns="http://www.w3.org/2000/svg"><g class="bob">
+    <path d="M38 252 Q40 186 100 180 Q160 186 162 252Z" fill="${c.shirt}"/>
+    <rect x="89" y="156" width="22" height="30" rx="9" fill="#f6cdb0"/>
+    <path d="M86 182 L100 198 L114 182" fill="#fff" opacity=".92"/>
+    ${back}
+    <circle cx="38" cy="116" r="11" fill="${S}"/><circle cx="162" cy="116" r="11" fill="${S}"/>
+    <circle cx="100" cy="104" r="62" fill="${S}"/>
+    <g class="eyes"><ellipse cx="78" cy="113" rx="6" ry="7.5" fill="#2a1d18"/><ellipse cx="122" cy="113" rx="6" ry="7.5" fill="#2a1d18"/><circle cx="80" cy="110" r="2.3" fill="#fff"/><circle cx="124" cy="110" r="2.3" fill="#fff"/></g>
+    <ellipse cx="66" cy="132" rx="9" ry="5.5" fill="#ff8f8f" opacity=".55"/><ellipse cx="134" cy="132" rx="9" ry="5.5" fill="#ff8f8f" opacity=".55"/>
+    <path class="mcl" d="M89 135 Q100 146 111 135" stroke="#7a2e1f" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <g class="mo"><path d="M87 133 Q100 157 113 133Z" fill="#7a2e1f"/><path d="M93 144 Q100 152 107 144 Q100 140 93 144Z" fill="#ff8a80"/></g>
+    ${front}${over}
+    <path d="M68 91 Q78 85 88 91 M112 91 Q122 85 132 91" stroke="${H}" stroke-width="4" fill="none" stroke-linecap="round"/>
+    ${glasses}${acc}
+  </g></svg>`;
+}
+
+/* ---------------- 화면 ---------------- */
+function renderChar(){
+  const c=curChar();
+  $('#mc').innerHTML = customImg ? `<img class="mc-img" src="${customImg}" alt="MC 이미지">` : svgChar(c);
+  $('#plate').innerHTML = `${c.name}<small>AI MC</small>`;
+}
+function renderRail(){
+  const cur = SECTIONS.findIndex(s=>s.k===SC[idx].s);
+  const r=$('#rail'); r.innerHTML='';
+  SECTIONS.forEach((s,i)=>{const b=el('button',(i===cur?'on ':i<cur?'done ':'')+(s.brk?'brk':''),s.t); b.onclick=()=>jumpSection(i); r.appendChild(b); if(i===cur) setTimeout(()=>b.scrollIntoView({inline:'center',block:'nearest'}),0);});
+  $('#pbar').style.width = ((idx+1)/SC.length*100)+'%';
+  $('#ptext').textContent = `${SECTIONS[cur].t} · ${idx+1} / ${SC.length}`;
+  $('#prevBtn').disabled = idx===0;
+  $('#nextBtn').textContent = idx===SC.length-1 ? '끝 🎉' : '다음 ▶';
+}
+function jumpSection(i){const n=SC.findIndex(s=>s.s===SECTIONS[i].k); if(n>=0) go(n); closeOv();}
+
+let typer=null, speaking=false, run=0, running=false, fullText='';
+function talking(on){ $('#mc').classList.toggle('talking',on); duck(on); }
+
+/* 멘트 공연: 대사 속 [팡파레] 같은 표시를 만나면, 앞 문장을 다 읽은 뒤 그 효과음을 터뜨리고 이어감 */
+const FXNAME={'팡파레':'fanfare','띵동':'chime','드럼롤':'drumroll','건배':'clink','띠용':'boing','딩동댕':'ding','휘익':'whoosh','찰칵':'shutter','짜잔':'tada','땡':'wrong'};
+function parseLine(t){ const segs=[], re=/\[([^\]]+)\]/g; let last=0, m;
+  while((m=re.exec(t))){ segs.push({t:t.slice(last,m.index), fx:m[1].split('+').map(s=>FXNAME[s.trim()]).filter(Boolean)}); last=re.lastIndex; }
+  const rest=t.slice(last); if(rest.trim()) segs.push({t:rest, fx:[]});
+  return segs; }
+const plain=t=>t.replace(/\s*\[[^\]]+\]\s*/g,' ').replace(/\s{2,}/g,' ').trim();
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function pickVoice(){ const vs=koVoices(); return vs.find(x=>x.name===voiceName)||vs[0]; }
+function typeSeg(prefix,seg,my){ return new Promise(res=>{ const bt=$('#btext'); let i=0; if(!seg){res();return;}
+  const iv=setInterval(()=>{ if(my!==run){clearInterval(iv);res();return;} i++; bt.innerHTML=esc(prefix+seg.slice(0,i))+(i<seg.length?'<span class="caret"></span>':''); if(i>=seg.length){clearInterval(iv);res();} },38); }); }
+/* 미리 만든 AI 음성 파일(voice/*.mp3)이 있으면 그걸 틀고, 없는 문장만 기기 TTS로 읽음 */
+const VF = {"안녕하세요! 리스크공학부 야유회 에이아이 엠씨, 헷지쌤입니다! 제 목소리 잘 들리시나요?":"voice/000.mp3","여러분 안녕하세요! 리스크공학부 하반기 야유회에 오신 것을 진심으로 환영합니다!":"voice/001.mp3","오늘 사회를 맡은, 에이아이 헷지쌤입니다!":"voice/002.mp3","사실 오늘이 제 첫 엠씨 데뷔 무대인데요, 많이 떨립니다.":"voice/003.mp3","제 첫 데뷔를 위해, 큰 박수 한번 부탁드려요!":"voice/004.mp3","네, 맞아요. 사람 아니고 에이아이입니다!":"voice/005.mp3","리스크공학부 최초의 에이아이 사회자인데요, 장점이 뭐냐고요? 출연료 0원, 식대 0원, 대게도 안 먹습니다!":"voice/006.mp3","그러니까 오늘 제 몫까지 여러분이 다 드세요 동의하시면 박수 한번!":"voice/007.mp3","대신 단점이 하나 있어요. 술을 못 마십니다,":"voice/008.mp3","그러니까 건배는 여러분이 제 몫까지 두 배로 해주시고요, 그 대신 점수 계산은 정확하게, 룰렛은 공정하게 하겠습니다. 편애는 0%!":"voice/009.mp3","상반기엔 여의도 한강에서 유람선 타고 강바람 맞았죠? 하반기엔 한 단계 업그레이드해서, 강을 넘어 바다로 왔습니다!":"voice/010.mp3","오늘 회 좋아하시는 분, 손 한번 들어볼까요? 대게 좋아하시는 분도요!":"voice/011.mp3","역시, 오늘 장소 선정은 완벽하네요. 노량진 수산시장, 회와 대게로 달려봅시다! 다 같이 박수!":"voice/012.mp3","오늘의 진행 순서입니다. 이야기는 짧게, 먹는 건 길게! 그리고 중간중간, 깜짝 자리 바꾸기가 세 번 있습니다!":"voice/013.mp3","오늘은 셀 대항전이에요. 게임마다 점수가 쌓이고, 우승 셀에게는 영광의 상이 기다리고 있습니다!":"voice/014.mp3","점수는 화면 위 점수판에서 언제든 확인하실 수 있어요. 자, 셀 대항전 준비되셨으면 박수 세 번!":"voice/015.mp3","그럼 출석 체크 들어갈게요! 오늘은 셀이 다 섞여 앉아 계시죠? 그래서 준비했습니다. 우리 셀 어디 있니? 손 번쩍 출석!":"voice/016.mp3","셀 이름이 불리면 그 셀원들만 자리에서 손을 번쩍! 원하시면 살짝 일어나셔도 돼요. 제일 빨리, 제일 높이 손 든 셀에 보너스 3점 드립니다!":"voice/017.mp3","첫 번째! 운영리스크셀!":"voice/018.mp3","이상철 셀장님, 김소라 팀장님, 오준상 프로님, 박진희 프로님, 이송아 프로님! 손 번쩍 들어주세요":"voice/019.mp3","와 여기저기 골고루 퍼져 계시네요! 은행의 모든 사고를 미리 막아주는 든든한 방패, 같은 셀끼리 손 한번 흔들어 주시고, 다 같이 응원의 박수!":"voice/020.mp3","두 번째! 고객자산리스크셀!":"voice/021.mp3","정지석 셀장님, 이병훈 팀장님, 권용근 팀장님, 장하영 프로님, 양귀재 프로님! 손 번쩍 들어주세요":"voice/022.mp3","와 여기저기 골고루 퍼져 계시네요! 고객의 소중한 자산을 지키는 철벽 수비대, 같은 셀끼리 손 한번 흔들어 주시고, 다 같이 응원의 박수!":"voice/023.mp3","세 번째! 에이엘엠 셀!":"voice/024.mp3","이정화 셀장님, 이철주 팀장님, 최명준 팀장님, 김현수 프로님! 손 번쩍 들어주세요":"voice/025.mp3","와 여기저기 골고루 퍼져 계시네요! 금리와 유동성, 은행의 균형을 잡는 밸런스 장인, 같은 셀끼리 손 한번 흔들어 주시고, 다 같이 응원의 박수!":"voice/026.mp3","네 번째! 시장미들 셀!":"voice/027.mp3","김경환 셀장님, 이인범 팀장님, 황지은 팀장님, 김소희 프로님, 박창현 프로님! 손 번쩍 들어주세요":"voice/028.mp3","와 여기저기 골고루 퍼져 계시네요! 숫자 하나도 놓치지 않는 매의 눈, 같은 셀끼리 손 한번 흔들어 주시고, 다 같이 응원의 박수!":"voice/029.mp3","마지막 다섯 번째! 시장리스크 셀!":"voice/030.mp3","임현수 셀장님, 나유라 팀장님, 이현국 팀장님, 박새한 팀장님, 김지선 팀장님! 손 번쩍 들어주세요":"voice/031.mp3","와 여기저기 골고루 퍼져 계시네요! 시장이 흔들려도 절대 흔들리지 않는 강철 멘탈, 같은 셀끼리 손 한번 흔들어 주시고, 다 같이 응원의 박수!":"voice/032.mp3","자, 제일 빨리, 제일 높이 손 든 셀은 어디였나요?":"voice/033.mp3","부장님께서 골라주시면, 해당 셀을 눌러 3점 드릴게요!":"voice/034.mp3","그리고 오늘의 주인공!":"voice/035.mp3","리스크공학부를 이끌어 주시는 전효진 부장님!":"voice/036.mp3","다 같이 뜨거운 박수와 환호 부탁드립니다!":"voice/037.mp3","그럼 본격적인 시작에 앞서, 전효진 부장님께 오늘을 여는 한 말씀 청해 듣겠습니다. 큰 박수로 모셔볼게요!":"voice/038.mp3","부장님, 좋은 말씀 감사합니다! 좋은 말씀 해주신 부장님께 다시 한번 큰 박수!":"voice/039.mp3","이어서 건배사까지 부탁드려도 될까요? 리스크공학부 맞춤 건배사 세 가지를 준비했어요. 마음에 드는 걸 골라주세요!":"voice/040.mp3","자, 부장님 건배사에는 우렁찬 후창으로 호응해 주셔야 합니다! 다 같이 잔을 채워주세요! 부장님이 선창하시면 우리는 후창! 준비, 시작!":"voice/041.mp3","건배 완료!":"voice/042.mp3","멋진 건배사 해주신 부장님께 박수! 오늘 상차림 보셨어요? 싱싱한 회에 대게까지 한 상 가득!":"voice/043.mp3","회는 마르기 전에, 대게는 식기 전에 얼른 드셔야죠. 편하게 맛있게 드시고, 이따 다시 돌아올게요. 살짝 예고하자면,":"voice/044.mp3","돌아오는 순간, 누군가는 자리를 옮기게 됩니다!":"voice/045.mp3","그리고 대게와 바젤이 한 문제에 같이 나오는 오엑스 퀴즈까지, 기대하세요":"voice/046.mp3","회랑 대게, 맛있게 드시고 계신가요? 예고해 드린 대로, 운명의 자리 바꾸기 첫 번째 시간입니다!":"voice/047.mp3","서로 다른 셀에서 4명을 무작위로 뽑을 거고요, 뽑힌 분들은 화살표대로 이동해 주시면 됩니다.":"voice/048.mp3","새 자리 적응 완료! 첫 번째 게임, 오엑스 서바이벌입니다!":"voice/049.mp3","먼저 모두 손 번쩍 들어주세요! 문제가 나오면 각자 손으로 O 또는 X를 만들고, 틀리면 손 내리고 탈락!":"voice/050.mp3","마지막까지 살아남으신 분 한 명당 소속 셀에 2점씩 드립니다!":"voice/051.mp3","1번 문제! 모두 참여하세요! 대게는 몸집이 커서 대게라고 부른다! O일까요, X일까요?":"voice/052.mp3","2번 문제! 살아남은 분들만 참여하세요! 대게 다리는 집게다리까지 모두 합쳐 10개다! O일까요, X일까요?":"voice/053.mp3","3번 문제! 살아남은 분들만 참여하세요! 킹크랩은 생물학적으로 대게보다 소라게(집게) 쪽에 더 가깝다! O일까요, X일까요?":"voice/054.mp3","4번 문제! 살아남은 분들만 참여하세요! 배를 아래로 놓고 봤을 때 눈이 왼쪽에 몰려 있으면 광어다! O일까요, X일까요?":"voice/055.mp3","5번 문제! 살아남은 분들만 참여하세요! 연어는 바다에서 태어나 강으로 올라가 알을 낳는다! O일까요, X일까요?":"voice/056.mp3","6번 문제! 살아남은 분들만 참여하세요! 신뢰수준 99% 1일 밸류 앳 리스크가 100억이면, 100일 중 하루 정도는 손실이 100억을 넘을 수 있다는 뜻이다! O일까요, X일까요?":"voice/057.mp3","7번 문제! 살아남은 분들만 참여하세요! 다른 조건이 같다면, 듀레이션이 긴 채권일수록 금리 변화에 덜 민감하다! O일까요, X일까요?":"voice/058.mp3","8번 문제! 살아남은 분들만 참여하세요! 바젤 규제의 바젤은 스위스의 도시 이름이다! O일까요, X일까요?":"voice/059.mp3","오엑스 서바이벌 끝!":"voice/060.mp3","마지막까지 살아남으신 분들, 자리에서 일어나 주세요!":"voice/061.mp3","와 최후의 생존자들께 큰 박수! 화면에서 생존자 이름을 누르면 그 셀에 2점씩 들어갑니다!":"voice/062.mp3","끝까지 버텨주신 모든 분들, 리스크 전문가다운 촉이었어요. 스스로에게 박수! 현재 점수 한번 볼까요? 아직 역전의 기회는 충분합니다!":"voice/063.mp3","오엑스 서바이벌로 머리 많이 쓰셨죠? 잠깐 쉬어가는 시간입니다!":"voice/064.mp3","대게 앞에서는 다들 말이 없어지던데요, 아직 대게 남으신 분들, 지금이 발골 찬스예요!":"voice/065.mp3","새 자리 이웃과 이야기도 나누시면서 편하게 드시고요. 다녀와서는 두 번째 자리 바꾸기, 그리고 리스크 용어 초성 퀴즈가 기다리고 있어요!":"voice/066.mp3","손 빠른 셀이 이기니까, 미리 손 풀어두세요":"voice/067.mp3","배 좀 든든하게 채우셨나요? 두 번째 자리 바꾸기 시간입니다!":"voice/068.mp3","이번엔 누가 움직일까요? 새 자리 이웃과 짠 한번 하시고, 초성 퀴즈로 갑니다!":"voice/069.mp3","자, 손은 살짝 닦으시고 두 번째 게임, 초성 퀴즈!":"voice/070.mp3","정답 아는 분은 손 번쩍 들고 외쳐주세요. 맞힌 분의 셀에 1점입니다!":"voice/071.mp3","1번 문제, 리스크 용어! 정답 아시는 분 손 번쩍!":"voice/072.mp3","2번 문제, 오늘의 장소! 정답 아시는 분 손 번쩍!":"voice/073.mp3","3번 문제, 리스크 용어! 정답 아시는 분 손 번쩍!":"voice/074.mp3","4번 문제, 수산시장! 정답 아시는 분 손 번쩍!":"voice/075.mp3","5번 문제, 우리 부서! 정답 아시는 분 손 번쩍!":"voice/076.mp3","6번 문제, 리스크 용어! 정답 아시는 분 손 번쩍!":"voice/077.mp3","7번 문제, 수산시장! 정답 아시는 분 손 번쩍!":"voice/078.mp3","8번 문제, 리스크 용어! 정답 아시는 분 손 번쩍!":"voice/079.mp3","9번 문제, 리스크 용어! 정답 아시는 분 손 번쩍!":"voice/080.mp3","10번 문제, 오늘의 2차! 정답 아시는 분 손 번쩍!":"voice/081.mp3","초성 퀴즈 끝!":"voice/082.mp3","세 번째 게임은 에이아이 엠씨와 함께하는 반전 가위바위보!":"voice/083.mp3","그냥 가위바위보가 아니에요. 라운드마다 미션이 바뀝니다. 저를 이겨야 할 때도 있고, 져야 할 때도 있고, 저랑 똑같이 내야 할 때도 있어요!":"voice/084.mp3","미션에 실패하면 손 내리고 탈락, 최후의 1인이 속한 셀에 3점!":"voice/085.mp3","모두 손 준비!":"voice/086.mp3","가위바위보!를 누르면 이번 라운드 미션이 나오고, 제가 바로 냅니다!":"voice/087.mp3","반전 가위바위보 끝! 머리랑 손이 따로 노는 분들 많으셨죠?":"voice/088.mp3","끝까지 살아남으신 분께 큰 박수! 지금 점수는 이렇습니다!":"voice/089.mp3","한바탕 신나게 놀았으니 잠깐 쉬어갈까요? 자유 시간입니다! 다른 셀 테이블에 가서 한 잔 나누셔도 좋아요.":"voice/090.mp3","다녀오시면,":"voice/091.mp3","마지막 자리 바꾸기, 아재개그 넌센스 퀴즈, 그리고 오늘의 하이라이트 운명의 룰렛이 기다립니다!":"voice/092.mp3","누가 뽑힐지는 저도 몰라요. 진짜로요!":"voice/093.mp3","돌아오신 걸 환영합니다! 마지막 자리 바꾸기예요!":"voice/094.mp3","오늘 가장 많이 섞인 테이블은 어디일까요? 자, 뽑습니다!":"voice/095.mp3","새 자리 적응 완료!":"voice/096.mp3","이번엔 머리를 말랑말랑하게 풀어볼까요? 아재개그 넌센스 퀴즈입니다!":"voice/097.mp3","정답 아는 분은 손 번쩍 들고 외쳐주세요. 맞힌 분의 셀에 1점! 대신 너무 썰렁해도 화내기 없기":"voice/098.mp3","1번 문제! 세상에서 가장 빠른 닭은?":"voice/099.mp3","2번 문제! 물고기 중에서 학벌이 제일 좋은 물고기는?":"voice/100.mp3","3번 문제! 왕이 넘어지면?":"voice/101.mp3","4번 문제! 세상에서 가장 쉬운 숫자는?":"voice/102.mp3","5번 문제! 소가 웃으면?":"voice/103.mp3","6번 문제! 오리가 얼면?":"voice/104.mp3","7번 문제! 깨가 죽으면?":"voice/105.mp3","8번 문제! 세상에서 가장 뜨거운 바다는?":"voice/106.mp3","9번 문제! 자동차가 놀라면?":"voice/107.mp3","10번 문제! 딸기가 회사에서 잘리면?":"voice/108.mp3","넌센스 퀴즈 끝! 썰렁했지만 재밌으셨죠?":"voice/109.mp3","썰렁한 문제 끝까지 맞혀주신 여러분께 박수! 이제 오늘의 하이라이트로 갑니다!":"voice/110.mp3","이제 오늘의 하이라이트, 운명의 룰렛!":"voice/111.mp3","제가 무작위로 한 분, 미션도 무작위로 뽑을게요. 성공하면 소속 셀에 2점! 패스도 되지만, 셀 점수 1점이 빠집니다!":"voice/112.mp3","자, 룰렛 돌립니다! 아래 룰렛 돌리기를 눌러주세요. 몇 번 돌릴지는 분위기 보면서 정하시면 돼요!":"voice/113.mp3","자, 이제 운명의 시간!":"voice/114.mp3","최종 순위를 공개합니다! 공개 전에, 오늘 열심히 달려주신 모든 셀에 박수 한번! 순위 공개를 한 번씩 눌러주세요.":"voice/115.mp3","우승 셀 축하드립니다!":"voice/116.mp3","우승 셀에 축하의 박수와 환호 부탁드려요! 상품은 부장님께서 직접 수여해 주시겠습니다. 그리고 특별상 오늘의 리액션 왕은,":"voice/117.mp3","부장님이 직접 지명해 주세요!":"voice/118.mp3","이렇게 좋은 날 단체사진 빠질 수 없죠! 다 같이 모여주세요. 제가 카운트다운 할게요!":"voice/119.mp3","2차 안내드립니다! 원하시는 분들은 노들섬으로 이동해서 한강 야경과 함께 2라운드!":"voice/120.mp3","물론 1차에서 마무리하셔도 전혀 괜찮아요.":"voice/121.mp3","오늘 리스크공학부의 즐거움은 한도 초과!":"voice/122.mp3","우리 우정은 헷지 불가!":"voice/123.mp3","이 정도 익스포저는 보고 안 하셔도 됩니다":"voice/124.mp3","오늘 함께해 주신 여러분, 그리고 오늘을 준비해 주신 분들께 큰 박수 부탁드립니다! 제 첫 데뷔 무대, 여러분 덕분에 정말 행복했어요. 지금까지 에이아이 헷지쌤이었습니다. 모두 감사합니다!":"voice/125.mp3","정답은,":"voice/126.mp3","다리가 대나무(竹)처럼 곧고 마디가 있어서 대게라고 불러요. 틀리신 분은 아쉽지만 손 내려주시고요, 살아남은 분들은 손 더 높이!":"voice/127.mp3","O!":"voice/128.mp3","집게다리 2개 + 걷는 다리 8개 = 10개! 오늘 직접 세어 보세요. 틀리신 분은 아쉽지만 손 내려주시고요, 살아남은 분들은 손 더 높이!":"voice/129.mp3","킹크랩은 집게류에 속해요. 그래서 겉으로 보이는 다리도 8개뿐이랍니다. 틀리신 분은 아쉽지만 손 내려주시고요, 살아남은 분들은 손 더 높이!":"voice/130.mp3","그 유명한 좌광우도! 왼쪽은 광어, 오른쪽은 도다리. 틀리신 분은 아쉽지만 손 내려주시고요, 살아남은 분들은 손 더 높이!":"voice/131.mp3","강에서 태어나 바다에서 자란 뒤, 태어난 강으로 돌아와 알을 낳아요. 틀리신 분은 아쉽지만 손 내려주시고요, 살아남은 분들은 손 더 높이!":"voice/132.mp3","99% 신뢰수준이니 1% 확률, 즉 100일에 하루 꼴로 밸류 앳 리스크를 넘는 손실이 날 수 있어요. 틀리신 분은 아쉽지만 손 내려주시고요, 살아남은 분들은 손 더 높이!":"voice/133.mp3","듀레이션이 길수록 금리 변화에 더 민감해요. 에이엘엠 셀 여러분, 웃고 계시죠? 틀리신 분은 아쉽지만 손 내려주시고요, 살아남은 분들은 손 더 높이!":"voice/134.mp3","바젤은행감독위원회가 있는 국제결제은행(비아이에스) 본부가 스위스 바젤에 있어요. 틀리신 분은 아쉽지만 손 내려주시고요, 살아남은 분들은 손 더 높이!":"voice/135.mp3","앗, 모두 탈락하셨네요!":"voice/136.mp3","패자부활전! 다시 모두 손 들어주세요":"voice/137.mp3","스트레스 테스트!":"voice/138.mp3","노량진 수산시장!":"voice/139.mp3","듀레이션!":"voice/140.mp3","킹크랩!":"voice/141.mp3","운영리스크!":"voice/142.mp3","유동성!":"voice/143.mp3","초고추장!":"voice/144.mp3","미들오피스!":"voice/145.mp3","자기자본 비율!":"voice/146.mp3","노들섬!":"voice/147.mp3","후다닭!":"voice/148.mp3","고등어!":"voice/149.mp3","킹콩!":"voice/150.mp3","190,000 (십구만 → 쉽구만!)!":"voice/151.mp3","우하하!":"voice/152.mp3","언덕!":"voice/153.mp3","주근깨!":"voice/154.mp3","열바다 (열받아!)!":"voice/155.mp3","카놀라유!":"voice/156.mp3","딸기시럽 (딸기 실업!)!":"voice/157.mp3","당첨!":"voice/158.mp3","화살표대로 자리를 옮기시고, 새 이웃과 건배 한번 해주세요":"voice/159.mp3","자리 옮기신 분들께 환영의 박수!":"voice/160.mp3","전효진 부장님!":"voice/161.mp3","미션 성공!":"voice/162.mp3","전효진 부장님, 멋졌어요! 다 같이 박수!":"voice/163.mp3","오늘의 주인공은, 전효진 부장님!":"voice/164.mp3","미션 나갑니다! 응원의 박수 부탁드려요":"voice/165.mp3","이상철 셀장님!":"voice/166.mp3","이상철 셀장님, 멋졌어요! 다 같이 박수!":"voice/167.mp3","오늘의 주인공은, 이상철 셀장님!":"voice/168.mp3","김소라 팀장님!":"voice/169.mp3","김소라 팀장님, 멋졌어요! 다 같이 박수!":"voice/170.mp3","오늘의 주인공은, 김소라 팀장님!":"voice/171.mp3","오준상 프로님!":"voice/172.mp3","오준상 프로님, 멋졌어요! 다 같이 박수!":"voice/173.mp3","오늘의 주인공은, 오준상 프로님!":"voice/174.mp3","박진희 프로님!":"voice/175.mp3","박진희 프로님, 멋졌어요! 다 같이 박수!":"voice/176.mp3","오늘의 주인공은, 박진희 프로님!":"voice/177.mp3","이송아 프로님!":"voice/178.mp3","이송아 프로님, 멋졌어요! 다 같이 박수!":"voice/179.mp3","오늘의 주인공은, 이송아 프로님!":"voice/180.mp3","정지석 셀장님!":"voice/181.mp3","정지석 셀장님, 멋졌어요! 다 같이 박수!":"voice/182.mp3","오늘의 주인공은, 정지석 셀장님!":"voice/183.mp3","이병훈 팀장님!":"voice/184.mp3","이병훈 팀장님, 멋졌어요! 다 같이 박수!":"voice/185.mp3","오늘의 주인공은, 이병훈 팀장님!":"voice/186.mp3","권용근 팀장님!":"voice/187.mp3","권용근 팀장님, 멋졌어요! 다 같이 박수!":"voice/188.mp3","오늘의 주인공은, 권용근 팀장님!":"voice/189.mp3","장하영 프로님!":"voice/190.mp3","장하영 프로님, 멋졌어요! 다 같이 박수!":"voice/191.mp3","오늘의 주인공은, 장하영 프로님!":"voice/192.mp3","양귀재 프로님!":"voice/193.mp3","양귀재 프로님, 멋졌어요! 다 같이 박수!":"voice/194.mp3","오늘의 주인공은, 양귀재 프로님!":"voice/195.mp3","이정화 셀장님!":"voice/196.mp3","이정화 셀장님, 멋졌어요! 다 같이 박수!":"voice/197.mp3","오늘의 주인공은, 이정화 셀장님!":"voice/198.mp3","이철주 팀장님!":"voice/199.mp3","이철주 팀장님, 멋졌어요! 다 같이 박수!":"voice/200.mp3","오늘의 주인공은, 이철주 팀장님!":"voice/201.mp3","최명준 팀장님!":"voice/202.mp3","최명준 팀장님, 멋졌어요! 다 같이 박수!":"voice/203.mp3","오늘의 주인공은, 최명준 팀장님!":"voice/204.mp3","김현수 프로님!":"voice/205.mp3","김현수 프로님, 멋졌어요! 다 같이 박수!":"voice/206.mp3","오늘의 주인공은, 김현수 프로님!":"voice/207.mp3","김경환 셀장님!":"voice/208.mp3","김경환 셀장님, 멋졌어요! 다 같이 박수!":"voice/209.mp3","오늘의 주인공은, 김경환 셀장님!":"voice/210.mp3","이인범 팀장님!":"voice/211.mp3","이인범 팀장님, 멋졌어요! 다 같이 박수!":"voice/212.mp3","오늘의 주인공은, 이인범 팀장님!":"voice/213.mp3","황지은 팀장님!":"voice/214.mp3","황지은 팀장님, 멋졌어요! 다 같이 박수!":"voice/215.mp3","오늘의 주인공은, 황지은 팀장님!":"voice/216.mp3","김소희 프로님!":"voice/217.mp3","김소희 프로님, 멋졌어요! 다 같이 박수!":"voice/218.mp3","오늘의 주인공은, 김소희 프로님!":"voice/219.mp3","박창현 프로님!":"voice/220.mp3","박창현 프로님, 멋졌어요! 다 같이 박수!":"voice/221.mp3","오늘의 주인공은, 박창현 프로님!":"voice/222.mp3","임현수 셀장님!":"voice/223.mp3","임현수 셀장님, 멋졌어요! 다 같이 박수!":"voice/224.mp3","오늘의 주인공은, 임현수 셀장님!":"voice/225.mp3","나유라 팀장님!":"voice/226.mp3","나유라 팀장님, 멋졌어요! 다 같이 박수!":"voice/227.mp3","오늘의 주인공은, 나유라 팀장님!":"voice/228.mp3","이현국 팀장님!":"voice/229.mp3","이현국 팀장님, 멋졌어요! 다 같이 박수!":"voice/230.mp3","오늘의 주인공은, 이현국 팀장님!":"voice/231.mp3","박새한 팀장님!":"voice/232.mp3","박새한 팀장님, 멋졌어요! 다 같이 박수!":"voice/233.mp3","오늘의 주인공은, 박새한 팀장님!":"voice/234.mp3","김지선 팀장님!":"voice/235.mp3","김지선 팀장님, 멋졌어요! 다 같이 박수!":"voice/236.mp3","오늘의 주인공은, 김지선 팀장님!":"voice/237.mp3","아쉽지만 패스!":"voice/238.mp3","그래도 용기 내주셔서 박수 한번!":"voice/239.mp3","대망의 우승은,":"voice/240.mp3","운영리스크셀!":"voice/241.mp3","축하합니다! 다 같이 축하의 박수!":"voice/242.mp3","고객자산리스크셀!":"voice/243.mp3","에이엘엠 셀!":"voice/244.mp3","시장미들 셀!":"voice/245.mp3","시장리스크 셀!":"voice/246.mp3","1라운드 미션은, 이겨라!":"voice/247.mp3","1라운드 미션은, 져라!":"voice/248.mp3","1라운드 미션은, 비겨라!":"voice/249.mp3","2라운드 미션은, 이겨라!":"voice/250.mp3","2라운드 미션은, 져라!":"voice/251.mp3","2라운드 미션은, 비겨라!":"voice/252.mp3","3라운드 미션은, 이겨라!":"voice/253.mp3","3라운드 미션은, 져라!":"voice/254.mp3","3라운드 미션은, 비겨라!":"voice/255.mp3","4라운드 미션은, 이겨라!":"voice/256.mp3","4라운드 미션은, 져라!":"voice/257.mp3","4라운드 미션은, 비겨라!":"voice/258.mp3","5라운드 미션은, 이겨라!":"voice/259.mp3","5라운드 미션은, 져라!":"voice/260.mp3","5라운드 미션은, 비겨라!":"voice/261.mp3","6라운드 미션은, 이겨라!":"voice/262.mp3","6라운드 미션은, 져라!":"voice/263.mp3","6라운드 미션은, 비겨라!":"voice/264.mp3","7라운드 미션은, 이겨라!":"voice/265.mp3","7라운드 미션은, 져라!":"voice/266.mp3","7라운드 미션은, 비겨라!":"voice/267.mp3","8라운드 미션은, 이겨라!":"voice/268.mp3","8라운드 미션은, 져라!":"voice/269.mp3","8라운드 미션은, 비겨라!":"voice/270.mp3","9라운드 미션은, 이겨라!":"voice/271.mp3","9라운드 미션은, 져라!":"voice/272.mp3","9라운드 미션은, 비겨라!":"voice/273.mp3","10라운드 미션은, 이겨라!":"voice/274.mp3","10라운드 미션은, 져라!":"voice/275.mp3","10라운드 미션은, 비겨라!":"voice/276.mp3","11라운드 미션은, 이겨라!":"voice/277.mp3","11라운드 미션은, 져라!":"voice/278.mp3","11라운드 미션은, 비겨라!":"voice/279.mp3","12라운드 미션은, 이겨라!":"voice/280.mp3","12라운드 미션은, 져라!":"voice/281.mp3","12라운드 미션은, 비겨라!":"voice/282.mp3","저는 가위!":"voice/283.mp3","이번 미션은 이겨라! 그러니까 가위 내신 분만 살아남고요, 나머지 분들은 손 내려주세요":"voice/284.mp3","이번 미션은 이겨라! 그러니까 바위 내신 분만 살아남고요, 나머지 분들은 손 내려주세요":"voice/285.mp3","이번 미션은 이겨라! 그러니까 보 내신 분만 살아남고요, 나머지 분들은 손 내려주세요":"voice/286.mp3","이번 미션은 져라! 그러니까 가위 내신 분만 살아남고요, 나머지 분들은 손 내려주세요":"voice/287.mp3","이번 미션은 져라! 그러니까 바위 내신 분만 살아남고요, 나머지 분들은 손 내려주세요":"voice/288.mp3","이번 미션은 져라! 그러니까 보 내신 분만 살아남고요, 나머지 분들은 손 내려주세요":"voice/289.mp3","이번 미션은 비겨라! 그러니까 가위 내신 분만 살아남고요, 나머지 분들은 손 내려주세요":"voice/290.mp3","이번 미션은 비겨라! 그러니까 바위 내신 분만 살아남고요, 나머지 분들은 손 내려주세요":"voice/291.mp3","이번 미션은 비겨라! 그러니까 보 내신 분만 살아남고요, 나머지 분들은 손 내려주세요":"voice/292.mp3","저는 바위!":"voice/293.mp3","저는 보!":"voice/294.mp3","포즈! 사진 찍을 시간 드릴게요. 천천히 찍어주세요":"voice/295.mp3"};
+let hq = LS.get('hq',true), curClip=null;
+const splitSent=c=>(c.match(/[^.!?…~]+[.!?…~]*/g)||[c]).map(s=>s.trim()).filter(Boolean);
+function stopClip(){ if(curClip){ try{curClip.pause();}catch(e){} curClip=null; } }
+function preloadClips(text){ if(!hq) return; parseLine(text).forEach(sg=>{ const c=sayable(sg.t), f=VF[c]; if(f){ const a=new Audio(); a.preload='auto'; a.src=f; } }); }
+function playClip(f,my){ return new Promise(res=>{ if(my!==run){res(true);return;}
+  stopClip(); const a=new Audio(f); curClip=a; a.volume=Math.max(0,Math.min(1,vol));
+  let done=false; const fin=ok=>{ if(!done){done=true;clearTimeout(to);speaking=false;res(ok);} };
+  const to=setTimeout(()=>fin(true),30000);
+  a.onplaying=()=>{ if(my===run){speaking=true;talking(true);} };
+  a.onended=()=>fin(true); a.onerror=()=>fin(false); a.onpause=()=>{ if(my!==run) fin(true); };
+  a.play().catch(()=>fin(false)); }); }
+async function speakSeg(t,my){ const clean=sayable(t); if(!tts||!clean) return;
+  if(hq){ let list=VF[clean]?[VF[clean]]:null;
+    if(!list){ const ps=splitSent(clean); if(ps.every(x=>VF[x])) list=ps.map(x=>VF[x]); }
+    if(list){ let ok=true; for(const f of list){ if(my!==run) return; ok=await playClip(f,my); if(!ok) break; } if(ok) return; } }
+  return ttsSeg(clean,my); }
+function ttsSeg(clean,my){ return new Promise(res=>{ try{
+    const parts=(clean.match(/[^.!?…~]+[.!?…~]*/g)||[clean]).map(s=>s.trim()).filter(Boolean); if(!parts.length){res();return;}
+    const v=pickVoice(); let done=false; const fin=()=>{ if(!done){done=true;clearTimeout(to);speaking=false;res();} };
+    const to=setTimeout(fin,2500+clean.length*220/rate); // onend가 안 오는 기기 대비
+    parts.forEach((s,k)=>{ const u=new SpeechSynthesisUtterance(s); u.lang='ko-KR'; u.rate=rate; u.pitch=pitch; u.volume=vol; if(v) u.voice=v;
+      u.onstart=()=>{ if(my===run){speaking=true;talking(true);} };
+      if(k===parts.length-1){ u.onend=fin; u.onerror=fin; }
+      speechSynthesis.speak(u); });
+  }catch(e){res();} }); }
+async function perform(text,fallbackFx){
+  const my=++run; try{speechSynthesis.cancel();}catch(e){} stopClip(); preloadClips(text);
+  const segs=parseLine(text); fullText=plain(text); running=true; talking(true);
+  if(fallbackFx && !segs.some(s=>s.fx.length)) play(fallbackFx);
+  if(tts) await wait(80);
+  let shown='';
+  for(const s of segs){
+    if(my!==run) return;
+    await Promise.all([typeSeg(shown,s.t,my), speakSeg(s.t,my)]); shown+=s.t;
+    if(my!==run) return;
+    if(s.fx.length){ s.fx.forEach(n=>play(n)); talking(false); await wait(Math.min(1400,Math.max(...s.fx.map(fxLen)))*.85); if(my!==run) return; talking(true); }
+  }
+  running=false; talking(false); $('#btext').innerHTML=esc(fullText);
+}
+function typeText(t){ perform(t); }
+function finishTyping(){ run++; running=false; try{speechSynthesis.cancel();}catch(e){} stopClip(); speaking=false; $('#btext').innerHTML=esc(fullText); talking(false); }
+const esc=s=>s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
+// 기기마다 깔린 음성 품질이 달라서, 사람 목소리에 가까운 음성(Natural·Premium·향상됨 등)을 먼저 고름
+function voiceScore(v){const n=v.name; let s=0;
+  if(/natural|neural/i.test(n)) s+=60; if(/premium|프리미엄/i.test(n)) s+=50; if(/enhanced|향상/i.test(n)) s+=40;
+  if(/online/i.test(n)) s+=30; if(/siri/i.test(n)) s+=35; if(/google/i.test(n)) s+=20; if(/yuna|유나|sunhi|선히|injoon|인준/i.test(n)) s+=10;
+  return s;}
+function koVoices(){try{return speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.toLowerCase().replace('_','-').startsWith('ko')).sort((a,b)=>voiceScore(b)-voiceScore(a));}catch(e){return [];}}
+function sayable(t){ return t.replace(/\p{Extended_Pictographic}|️/gu,'').replace(/[「」]/g,'')
+  .replace(/Cell/g,'셀').replace(/MC/g,'엠씨').replace(/ALM/g,'에이엘엠').replace(/VaR/g,'밸류 앳 리스크').replace(/OX/g,'오엑스').replace(/BIS/g,'비아이에스').replace(/\bAI\b/g,'에이아이')
+  .replace(/\+(\d)/g,'$1점').replace(/~+/g,'').replace(/…+/g,', ').replace(/!{2,}/g,'!').replace(/\s*,\s*,/g,',').replace(/\s{2,}/g,' ').trim(); }
+let voiceWarned=false, spTimer=null, spId=0;
+function speak(t,force){
+  try{
+    clearTimeout(spTimer); speechSynthesis.cancel(); speaking=false;
+    if(!tts&&!force) return;
+    const clean=sayable(t);
+    // 긴 문장은 일부 태블릿에서 중간에 끊겨서 문장 단위로 나눠 읽음
+    const parts=(clean.match(/[^.!?…~]+[.!?…~]*/g)||[clean]).map(s=>s.trim()).filter(Boolean);
+    const vs=koVoices(), v=vs.find(x=>x.name===voiceName)||vs[0];
+    if(!v&&!voiceWarned&&speechSynthesis.getVoices().length){voiceWarned=true;toast('이 기기에 한국어 음성이 없어요. 기기 설정에서 한국어 TTS를 설치해 주세요');}
+    const my=++spId;
+    // cancel 직후 바로 speak하면 크롬에서 소리가 씹히는 경우가 있어 잠깐 쉬고 재생
+    spTimer=setTimeout(()=>{ if(my!==spId) return;
+      parts.forEach((s,k)=>{const u=new SpeechSynthesisUtterance(s); u.lang='ko-KR'; u.rate=rate; u.pitch=pitch; u.volume=vol; if(v) u.voice=v;
+        u.onstart=()=>{if(my!==spId)return; speaking=true;talking(true)};
+        u.onend=()=>{if(my!==spId)return; if(k===parts.length-1){speaking=false; if(!typer) talking(false);}};
+        u.onerror=e=>{if(my!==spId)return; speaking=false; if(!typer) talking(false); if(e.error!=='interrupted'&&e.error!=='canceled') toast('목소리가 재생되지 않았어요. 「소리」 버튼에서 테스트해 보세요');};
+        speechSynthesis.speak(u);});
+    },80);
+  }catch(e){toast('이 기기에서는 목소리 기능을 쓸 수 없어요');}
+}
+function unlockVoice(){try{const u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u);}catch(e){}}
+
+function go(i){
+  if(i<0||i>=SC.length) return;
+  idx=i; LS.set('idx',idx);
+  const sc=SC[idx];
+  renderRail();
+  perform(fmt(sc.t), fxFor(sc));
+  const mc=$('#mc'); mc.classList.remove('wow'); if(sc.m==='wow'){void mc.offsetWidth; mc.classList.add('wow');}
+  const w=$('#widget'); w.innerHTML='';
+  if(sc.w && W[sc.w.type]) W[sc.w.type](w,sc.w);
+  w.scrollTop=0;
+}
+function next(){ if(running){finishTyping();return;} if(idx<SC.length-1) go(idx+1); else {confetti();} }
+function prev(){ if(idx>0) go(idx-1); }
+
+/* ---------------- 점수 ---------------- */
+function addScore(i,d){scores[i]+=d; LS.set('scores',scores); play(d>0?'ding':'wrong'); renderScores(); toast(`${CELLS[i].s} ${d>0?'+':''}${d}점!`); refreshStand();}
+function sorted(){return CELLS.map((c,i)=>({c,i,v:scores[i]})).sort((a,b)=>b.v-a.v);}
+function ranks(list){let r=0,prev=null;return list.map((x,k)=>{if(x.v!==prev){r=k+1;prev=x.v;}return r;});}
+function renderScores(){
+  const L=$('#scoreList'); L.innerHTML='';
+  CELLS.forEach((c,i)=>{const r=el('div','srow'); r.style.setProperty('--cc',c.c);
+    r.innerHTML=`<b>${c.n}</b><span class="n">${scores[i]}</span>`;
+    [-1,1,3].forEach(d=>{const b=el('button','btn sm',d>0?'+'+d:String(d)); b.onclick=()=>addScore(i,d); r.appendChild(b);});
+    L.appendChild(r);});
+  const S=sorted();
+  $('#scoreBtn').textContent = S[0].v>S[1].v ? '점수판 · 1위 '+S[0].c.s : '점수판';
+}
+function standHTML(){const L=sorted(),R=ranks(L);return L.map((x,k)=>`<div class="r" style="--cc:${x.c.c}"><span class="k">${R[k]}</span><b>${x.c.n}</b><span class="n">${x.v}점</span></div>`).join('');}
+function refreshStand(){document.querySelectorAll('.stand.live').forEach(s=>s.innerHTML=standHTML());}
+function cellButtons(p,label){const g=el('div','bonus');CELLS.forEach((c,i)=>{const b=el('button',null,`${c.s} ${label||'+'+p}`);b.style.setProperty('--cc',c.c);b.onclick=()=>addScore(i,p);g.appendChild(b);});return g;}
+
+/* ---------------- 위젯 ---------------- */
+const W={
+  hero(w,o){ w.appendChild(el('div','hero', o.end
+    ? `<div class="k">THANK YOU · RISK ENGINEERING</div><h1>오늘 즐거움은 <em>한도 초과</em>,<br>우리 우정은 <em>헷지 불가</em>!</h1><p>리스크는 대~게 낮고, 행복은 대~게 높았던 하반기 야유회 · 노량진 수산시장</p>`
+    : `<div class="k">RISK ENGINEERING DEPT · 하반기 야유회</div><h1>리스크는 <em>제로</em>,<br>행복은 <em>풀베팅</em>!</h1><p>노량진 수산시장 · 회 + 대게 · 셀 대항 레크리에이션</p>`)); },
+  agenda(w){ const cur=SECTIONS.findIndex(s=>s.k===SC[idx].s); const g=el('div','agenda');
+    SECTIONS.forEach((s,i)=>g.appendChild(el('div',(s.brk?'brk ':'')+(i===cur?'on':''),`<b>${s.t}</b><span>${s.brk?'휴식 · 시간 자율':s.d}</span>`))); w.appendChild(g); },
+  stand(w){ w.appendChild(el('div','wtitle','현재 순위')); w.appendChild(el('div','stand live',standHTML())); },
+  cell(w,o){ const c=CELLS[o.i]; const d=el('div','cellcard'); d.style.setProperty('--cc',c.c);
+    d.innerHTML=`<h2>${c.n}</h2><p>${c.slogan}</p><div class="chips"><span class="chip lead">${c.lead}</span>${c.m.map(m=>`<span class="chip">${m}</span>`).join('')}</div>`;
+    w.appendChild(d); w.appendChild(el('div','count hand','🙋 손 번쩍!')); },
+  bonus(w,o){ w.appendChild(el('div','wtitle','손 번쩍 1등 셀 +'+o.p+'점')); w.appendChild(cellButtons(o.p)); },
+  boss(w){ const d=el('div','cellcard'); d.style.setProperty('--cc','#ffcf3a');
+    d.innerHTML=`<h2>${HEAD}</h2><p>리스크공학부 5개 셀, ${PEOPLE.length-1}명의 리스크 전문가를 이끄는 우리의 캡틴</p><div class="chips">${CELLS.map(c=>`<span class="chip" style="border-color:${c.c};color:${c.c}">${c.n}</span>`).join('')}</div>`;
+    w.appendChild(d); },
+  toast(w,o){ const g=el('div','toasts');
+    const draw=()=>{g.innerHTML=''; TOASTS.forEach((t,i)=>{ if(o.big&&i!==toastPick) return;
+      const b=el('button','toast-opt'+(i===toastPick?' on':''),`<span class="l">${t.l} · 부장님 선창 → 다 같이 후창</span><b>${t.a}</b><b class="r">${t.b}</b>`);
+      if(o.big){b.style.padding='28px';b.querySelectorAll('b').forEach(x=>x.style.fontSize='clamp(40px,6vw,76px)');}
+      b.onclick=()=>{toastPick=i;LS.set('toast',i);draw();}; g.appendChild(b);});};
+    draw(); w.appendChild(g); },
+  rules(w,o){ w.appendChild(el('div','wtitle','게임 방법')); const d=el('div','info'); o.items.forEach((t,i)=>d.appendChild(el('div',null,`<b>STEP ${i+1}</b><span>${fmt(t)}</span>`))); w.appendChild(d); },
+  timer(w,o){
+    // 식사·자유 시간은 길이가 자율이라 카운트다운 없이 안내와 예고만 보여줌
+    const d=el('div','timer');
+    d.innerHTML=`<div class="wsub">${SECTIONS.find(s=>s.k===SC[idx].s).t} · 시간은 자율! 다음 순서가 준비되면 「다음 ▶」</div>
+      <div class="big">맛있게 드세요!</div>
+      <div class="talk"><small>NEXT · 다음 순서 예고</small><b>${o.teaser}</b>${o.hint?`<p class="tease">${o.hint}</p>`:''}</div>`;
+    w.appendChild(d);
+  },
+  ox(w,o){ const g=el('div','ox'); g.innerHTML=`<div class="o">O</div><div class="x">X</div>`; w.appendChild(g);
+    const row=el('div','row'); const rv=el('button','btn hot','정답 공개'); row.appendChild(rv); w.appendChild(row);
+    rv.onclick=()=>{ g.children[0].className='o '+(o.a==='O'?'win':'lose'); g.children[1].className='x '+(o.a==='X'?'win':'lose');
+      row.remove(); w.appendChild(el('div','explain',`정답은 <b>${o.a}</b>! ${o.e}`)); w.appendChild(el('div','wsub','틀리신 분은 손 내리고 탈락! 살아남은 분들만 다음 문제로 가요.'));
+      const rb=el('button','btn','🔁 모두 탈락했어요 → 패자부활전'); rb.onclick=()=>{ rb.remove(); typeText('앗, 모두 탈락하셨네요! [띠용] 패자부활전! 다시 모두 손 들어주세요~ [팡파레]'); }; w.appendChild(rb);
+      typeText(`정답은… [드럼롤] ${o.a}! [딩동댕+팡파레] ${o.e} 틀리신 분은 아쉽지만 손 내려주시고요, 살아남은 분들은 손 더 높이~!`); }; },
+  survivors(w){ w.appendChild(el('div','wtitle','최후의 생존자')); w.appendChild(el('div','wsub','살아남은 분 이름을 누르면 소속 셀에 2점! 잘못 눌렀으면 한 번 더 누르면 취소돼요.'));
+    const chips=el('div','chips'), cnt=el('div','wsub'), sel=new Set();
+    const upd=()=>cnt.textContent=`생존자 ${sel.size}명`;
+    PEOPLE.forEach(p=>{ const b=el('button','chip'+(p.cell<0?' lead':''),p.name);
+      b.onclick=()=>{ if(p.cell<0){ toast('부장님이 생존하시면 아래에서 원하는 셀에 2점 선물!'); return; }
+        if(sel.has(p.name)){ sel.delete(p.name); b.classList.remove('got'); addScore(p.cell,-2); }
+        else { sel.add(p.name); b.classList.add('got'); addScore(p.cell,2); }
+        upd(); };
+      chips.appendChild(b); });
+    w.append(chips,cnt,el('div','wsub','부장님이 생존하셨다면, 부장님이 고른 셀에 2점 선물!'),cellButtons(2,'+2 선물')); upd(); },
+  cho(w,o){ w.appendChild(el('span','cat',o.cat)); w.appendChild(el('div','cho',o.c));
+    const row=el('div','row'); row.style.justifyContent='center';
+    const hb=el('button','btn','힌트 보기'), ab=el('button','btn hot','정답 공개'); row.append(hb,ab); w.appendChild(row);
+    hb.onclick=()=>{hb.remove(); row.before(el('div','hint','💡 '+o.h));};
+    ab.onclick=()=>{row.remove(); w.appendChild(el('div','ans','정답! '+o.a)); w.appendChild(cellButtons(1)); typeText(`정답은… [드럼롤] ${o.a}! [딩동댕+팡파레]`);}; },
+  speech(w){ const d=el('div','cellcard'); d.style.setProperty('--cc','#ffcf3a');
+    d.innerHTML=`<p>오늘을 여는 한 말씀</p><h2>🎤 ${HEAD}</h2><p>말씀이 끝나면 「다음 ▶」을 눌러 건배사로 넘어가요.</p>`; w.appendChild(d); },
+  shuffle(w,o){
+    w.appendChild(el('div','wtitle',`운명의 자리 바꾸기 ${'①②③'[o.round-1]||''}`));
+    w.appendChild(el('div','wsub','서로 다른 셀에서 4명! 화살표 방향으로 자리를 옮겨주세요. 게임은 원래 셀 소속 그대로!'));
+    const grid=el('div','shuf'), row=el('div','row'), btn=el('button','btn hot','자리 바꿀 4명 뽑기');
+    const ex=el('label','chk',`<input type="checkbox" id="bossIn"> 부장님도 후보에 넣기`);
+    row.append(btn); w.append(grid,row,ex);
+    const pick=()=>{ const cs=[0,1,2,3,4]; if($('#bossIn').checked) cs.push(-1);
+      return cs.sort(()=>Math.random()-.5).slice(0,4).map(ci=>{let pool=PEOPLE.filter(p=>p.cell===ci&&!moved.has(p.name)); if(!pool.length) pool=PEOPLE.filter(p=>p.cell===ci); return pool[Math.floor(Math.random()*pool.length)];}); };
+    const draw=(L,fin)=>{ grid.innerHTML=''; L.forEach((p,k)=>{ const d=el('div',fin?'on':'',
+      `<div class="cl">${p.cell>=0?CELLS[p.cell].n:'리스크공학부장'}</div><div class="nm">${p.name}</div>${fin?`<div class="to">→ ${L[(k+1)%L.length].name} 자리로</div>`:''}`);
+      d.style.setProperty('--cc',p.cell>=0?CELLS[p.cell].c:'#ffcf3a'); grid.appendChild(d);}); };
+    btn.onclick=()=>{ btn.disabled=true; let n=0; const t=setInterval(()=>{ draw(pick(),false); tick();
+      if(++n>=16){ clearInterval(t); const L=pick(); draw(L,true); L.forEach(p=>moved.add(p.name)); LS.set('moved',[...moved]); sfx(1); confetti(50);
+        btn.disabled=false; btn.textContent='다시 뽑기';
+        typeText(`당첨! [짜잔] ${L.map(p=>p.name).join('! ')}! [팡파레] 화살표대로 자리를 옮기시고, 새 이웃과 건배 한번 해주세요~ [건배] 자리 옮기신 분들께 환영의 박수~!`); } },110); };
+  },
+  rps2(w){ const HANDS=[['✌️','가위'],['✊','바위'],['🖐️','보']]; // (i+1)%3 이 i 를 이김
+    const MIS=[{k:'win',t:'이겨라!',c:'#2f6fdb'},{k:'lose',t:'져라!',c:'#d94b30'},{k:'draw',t:'비겨라!',c:'#14806a'}];
+    const round=el('div','wsub','라운드 0'), mis=el('div','mission','<small>이번 미션</small>?'), big=el('div','count','✊'), lab=el('div','ans','모두 손 준비!');
+    const row=el('div','row'), go=el('button','btn hot','가위바위보!'); row.style.justifyContent='center'; row.append(go);
+    w.append(round,mis,big,lab,row,el('div','wsub','최후의 1인이 남으면, 그분의 셀을 눌러 +3점!'),cellButtons(3));
+    let r=0;
+    go.onclick=()=>{ go.disabled=true; r++; const m=r===1?MIS[0]:MIS[Math.floor(Math.random()*3)];
+      round.textContent=`라운드 ${r}`; mis.innerHTML=`<small>이번 미션</small>${m.t}`; mis.style.color=m.c; big.textContent='✊'; lab.textContent='';
+      typeText(`${r}라운드 미션은… ${m.t} [짜잔]`);
+      setTimeout(()=>{ const seq=['가위!','바위!','보!']; let k=0; lab.textContent=seq[0]; tick();
+        const iv=setInterval(()=>{ k++; if(k<3){ lab.textContent=seq[k]; tick(); return; } clearInterval(iv);
+          const h=Math.floor(Math.random()*3), s=m.k==='win'?(h+1)%3:m.k==='lose'?(h+2)%3:h;
+          big.textContent=HANDS[h][0]; lab.textContent=`MC는 ${HANDS[h][1]}! ${HANDS[s][1]} 낸 분만 생존!`; play('crash');
+          typeText(`저는 ${HANDS[h][1]}! [띠용] 이번 미션은 ${m.t} 그러니까 ${HANDS[s][1]} 내신 분만 살아남고요, 나머지 분들은 손 내려주세요~`);
+          go.disabled=false; go.textContent='다음 라운드!'; },650); },1800); };
+  },
+  non(w,o){ w.appendChild(el('span','cat','아재개그 넌센스')); w.appendChild(el('div','nonq',o.q));
+    const row=el('div','row'); row.style.justifyContent='center';
+    const hb=el('button','btn','힌트 보기'), ab=el('button','btn hot','정답 공개'); row.append(hb,ab); w.appendChild(row);
+    hb.onclick=()=>{ hb.remove(); row.before(el('div','hint','💡 '+o.h)); };
+    ab.onclick=()=>{ row.remove(); w.appendChild(el('div','ans','정답! '+o.a)); w.appendChild(cellButtons(1)); typeText(`정답은… [드럼롤] ${o.a}! [띠용]`); }; },
+  roulette(w){
+    const slot=el('div','slot','<div class="cl">오늘의 주인공은…</div><div class="nm">?</div><div class="cl">&nbsp;</div>');
+    const mis=el('div','mission'); mis.hidden=true;
+    const row=el('div','row'), spin=el('button','btn hot','룰렛 돌리기'), rem=el('button','btn','미션만 다시 뽑기');
+    const ex=el('label','chk',`<input type="checkbox" id="exPicked" checked> 이미 뽑힌 분 제외 (<span id="pc">${picked.size}</span>명)`);
+    rem.hidden=true; row.append(spin,rem); const res=el('div','row');
+    w.append(slot,mis,row,res,ex);
+    let who=null;
+    const drawMission=()=>{ const m=MISSIONS[Math.floor(Math.random()*MISSIONS.length)]; mis.hidden=false; mis.innerHTML=`<small>MISSION</small>${m}`;
+      res.innerHTML='';
+      if(who.cell>=0){ const ok=el('button','btn sun',`성공! ${CELLS[who.cell].s} +2`), ps=el('button','btn',`패스 (${CELLS[who.cell].s} -1)`);
+        ok.onclick=()=>{ addScore(who.cell,2); res.innerHTML=''; confetti(60); typeText(`미션 성공! [팡파레] ${who.name}, 멋졌어요! 다 같이 박수~!`); };
+        ps.onclick=()=>{ addScore(who.cell,-1); res.innerHTML=''; typeText('아쉽지만 패스! [땡] 그래도 용기 내주셔서 박수 한번~!'); };
+        res.append(ok,ps); }
+      else { res.appendChild(el('div','wsub','부장님 미션 성공 시, 부장님이 고른 셀에 2점 선물!')); res.appendChild(cellButtons(2,'+2 선물')); } };
+    spin.onclick=()=>{
+      let pool=PEOPLE.filter(p=>!($('#exPicked').checked&&picked.has(p.name))); if(!pool.length){ picked.clear(); pool=PEOPLE.slice(); }
+      who=pool[Math.floor(Math.random()*pool.length)]; spin.disabled=true; play('drumroll'); mis.hidden=true; res.innerHTML='';
+      slotRun(slot,pool,who,()=>{ picked.add(who.name); LS.set('picked',[...picked]); $('#pc').textContent=picked.size; spin.disabled=false; spin.textContent='한 번 더 돌리기'; rem.hidden=false; drawMission();
+        typeText(`오늘의 주인공은… ${who.name}! [팡파레] 미션 나갑니다! 응원의 박수 부탁드려요~`); });
+    };
+    rem.onclick=drawMission;
+  },
+  podium(w){
+    const L=sorted(),R=ranks(L); const g=el('div','stand pod');
+    L.forEach((x,k)=>g.appendChild(el('div','r hide'+(R[k]===1?' first':''),`<span class="k">${R[k]}</span><b>${x.c.n}</b><span class="n">${x.v}점</span>`)));
+    g.querySelectorAll('.r').forEach((r,k)=>r.style.setProperty('--cc',L[k].c.c));
+    const b=el('button','btn hot','순위 공개 (5위부터)'); let n=L.length;
+    b.onclick=()=>{n--; const r=g.children[n]; r.classList.remove('hide'); sfx();
+      if(n===0){b.remove(); confetti(); typeText(`대망의 우승은… [드럼롤] ${L[0].c.n}! [팡파레] 축하합니다! 다 같이 축하의 박수~!`);} else b.textContent=`다음 순위 공개 (${n}위)`;};
+    w.append(el('div','wtitle','최종 순위'),g,b);
+  },
+  count(w){ photoBox(w,15,false); },
+  info(w,o){ w.appendChild(el('div','wtitle','2차 · 노들섬')); const d=el('div','info'); o.rows.forEach(r=>d.appendChild(el('div',null,`<b>${r[0]}</b><span>${r[1]}</span>`))); w.appendChild(d); },
+};
+
+const POSES=['손하트 🫶','엄지척 👍','브이 ✌️','셀 이름 첫 글자 만들기','대게 집게 손 🦀','파이팅 주먹 ✊','머리 위 큰 하트 💗','다 같이 깜짝 놀란 표정 😲','옆 사람 어깨동무 🤝','회 한 점 들고 건배 🍣'];
+function flash(){ const f=el('div','flash'); document.body.appendChild(f); setTimeout(()=>f.remove(),700); }
+function photoBox(w,secs,showPose){
+  const box=el('div','posebox'); let pose=POSES[Math.floor(Math.random()*POSES.length)];
+  box.innerHTML=(showPose?`<div class="wsub">오늘의 포즈 추천</div><div class="pose"></div>`:`<div class="wsub">다 같이 모여서 카메라를 봐주세요!</div>`)+`<div class="count shot">📸</div>`;
+  const pe=box.querySelector('.pose'), big=box.querySelector('.shot'); if(pe) pe.textContent=pose;
+  const row=el('div','row'); row.style.justifyContent='center';
+  const go=el('button','btn hot','📸 3·2·1 카운트다운'), more=el('button','btn','+5초'), again=el('button','btn','한 장 더 찰칵'), other=el('button','btn','다른 포즈 추천');
+  more.hidden=true; again.hidden=true; row.append(go,more,again); if(showPose) row.append(other); box.appendChild(row); w.appendChild(box);
+  let st=null, iv=null;
+  const shot=()=>{ play('shutter'); flash(); };
+  other.onclick=()=>{ pose=POSES[(POSES.indexOf(pose)+1+Math.floor(Math.random()*(POSES.length-1)))%POSES.length]; pe.textContent=pose; play('pop'); };
+  more.onclick=()=>{ if(st){ st.s+=5; big.textContent=`📸 ${st.s}초`; } };
+  again.onclick=shot;
+  go.onclick=()=>{ clearInterval(iv); go.disabled=true; more.hidden=true; again.hidden=true; let n=3; big.textContent=n; beep(880,.12,.08);
+    iv=setInterval(()=>{ n--; if(n>0){ big.textContent=n; beep(880,.12,.08); return; }
+      clearInterval(iv); big.textContent='찰칵!'; shot();
+      typeText('포즈! 사진 찍을 시간 드릴게요. 천천히 찍어주세요~');
+      st={s:secs}; more.hidden=false; again.hidden=false;
+      setTimeout(()=>{ if(!st) return; big.textContent=`📸 ${st.s}초`;
+        iv=setInterval(()=>{ st.s--; if(st.s>0){ big.textContent=`📸 ${st.s}초`; return; }
+          clearInterval(iv); st=null; big.textContent='촬영 끝!'; play('ding'); more.hidden=true; again.hidden=true; go.disabled=false; go.textContent='📸 다시 찍기'; },1000); },1000);
+    },1000); };
+}
+function slotRun(slot,pool,who,done){
+  const nm=slot.querySelector('.nm'), cl=slot.lastElementChild; let t=0, delay=50;
+  const step=()=>{const p=pool[Math.floor(Math.random()*pool.length)]; nm.textContent=p.name; cl.textContent=p.cell>=0?CELLS[p.cell].n:'리스크공학부장'; tick();
+    t+=delay; delay*=1.09; if(t<2600) setTimeout(step,delay); else {nm.textContent=who.name; cl.textContent=who.cell>=0?CELLS[who.cell].n:'리스크공학부장'; sfx(); done();}};
+  step();
+}
+
+/* ---------------- 타이머 ---------------- */
+const T={total:0,left:0,running:false,last:0,scene:-1,next:'',iv:null};
+function startT(){ if(T.left<=0) return; T.running=true; T.last=Date.now(); clearInterval(T.iv); T.iv=setInterval(tickT,250); drawT(); }
+function pauseT(){ T.running=false; clearInterval(T.iv); drawT(); }
+function tickT(){ const now=Date.now(); T.left-= (now-T.last)/1000; T.last=now;
+  if(T.left<=0){T.left=0;pauseT();sfx(1);toast('쉬는 시간 끝! 다음 순서로 가볼까요?');}
+  drawT(); }
+const mmss=s=>{s=Math.ceil(s);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');};
+function drawT(){ const b=$('#tbig'); if(b){b.textContent=mmss(T.left); b.classList.toggle('end',T.left<=0);} const g=$('#tgo'); if(g) g.textContent=T.running?'일시정지':(T.left<T.total&&T.left>0?'계속':'타이머 시작');
+  const p=$('#tpill'); p.hidden=!(T.running&&SC[idx].w?.type!=='timer'); p.textContent='휴식 '+mmss(T.left); }
+
+/* ---------------- 효과 ---------------- */
+function ac(){ try{ if(!audio) audio=new (window.AudioContext||window.webkitAudioContext)(); return audio;}catch(e){return null} }
+function beep(f,d,v){const a=ac(); if(!a||sfxVol<=0) return; const o=a.createOscillator(),g=a.createGain(); o.frequency.value=f; o.type='triangle'; g.gain.value=(v||.08)*sfxVol*(speaking?.4:1); g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+d); o.connect(g).connect(a.destination); o.start(); o.stop(a.currentTime+d);}
+function tick(){beep(900,.04,.03)}
+function sfx(big){ play(big?'tada':'ding'); }
+
+/* 예능 효과음: Web Audio로 직접 합성 + 울림(리버브). 효과음마다 여러 버전 중 고르거나, 내 MP3로 바꿀 수 있음 */
+let fxBus=null, bgmBus=null, noiseBuf=null, ducked=false;
+function impulse(a,dur,decay){ const len=Math.floor(a.sampleRate*dur), b=a.createBuffer(2,len,a.sampleRate);
+  for(let c=0;c<2;c++){ const d=b.getChannelData(c); for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/len,decay); } return b; }
+function buses(){ const a=ac(); if(!a) return null;
+  if(!fxBus){ fxBus=a.createGain(); const dry=a.createGain(), wet=a.createGain(), verb=a.createConvolver();
+    verb.buffer=impulse(a,1.8,3); wet.gain.value=.3;
+    fxBus.connect(dry).connect(a.destination); fxBus.connect(verb); verb.connect(wet).connect(a.destination);
+    bgmBus=a.createGain(); bgmBus.gain.value=0; bgmBus.connect(a.destination);
+    noiseBuf=a.createBuffer(1,a.sampleRate*2,a.sampleRate); const d=noiseBuf.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1; }
+  fxBus.gain.value=sfxVol*1.4; return a; }
+function tone(f,t,d,{type='sine',g=.2,to=null,dest=fxBus,att=.005}={}){ const a=audio, o=a.createOscillator(), v=a.createGain();
+  o.type=type; o.frequency.setValueAtTime(f,t); if(to) o.frequency.exponentialRampToValueAtTime(to,t+d);
+  v.gain.setValueAtTime(0,t); v.gain.linearRampToValueAtTime(g,t+att); v.gain.exponentialRampToValueAtTime(.0001,t+d);
+  o.connect(v).connect(dest); o.start(t); o.stop(t+d+.05); return o; }
+function noise(t,d,{g=.2,f=1000,q=1,type='bandpass',to=null,dest=fxBus,att=.005}={}){ const a=audio, s=a.createBufferSource(), fl=a.createBiquadFilter(), v=a.createGain();
+  s.buffer=noiseBuf; fl.type=type; fl.frequency.setValueAtTime(f,t); if(to) fl.frequency.exponentialRampToValueAtTime(to,t+d); fl.Q.value=q;
+  v.gain.setValueAtTime(0,t); v.gain.linearRampToValueAtTime(g,t+att); v.gain.exponentialRampToValueAtTime(.0001,t+d);
+  s.connect(fl).connect(v).connect(dest); s.start(t,Math.random()); s.stop(t+d+.05); }
+const N=m=>440*Math.pow(2,(m-69)/12);
+
+/* 재료 소리 */
+function brass(f,t,d,g=.1){ const a=audio; [-8,0,8].forEach(det=>{ const o=a.createOscillator(), fl=a.createBiquadFilter(), v=a.createGain();
+  o.type='sawtooth'; o.frequency.value=f; o.detune.value=det; fl.type='lowpass'; fl.Q.value=1.2;
+  fl.frequency.setValueAtTime(f*1.5,t); fl.frequency.linearRampToValueAtTime(f*7,t+.04); fl.frequency.exponentialRampToValueAtTime(f*3.5,t+d);
+  v.gain.setValueAtTime(0,t); v.gain.linearRampToValueAtTime(g/3,t+.025); v.gain.setValueAtTime(g/3,t+d*.85); v.gain.exponentialRampToValueAtTime(.0001,t+d+.18);
+  o.connect(fl).connect(v).connect(fxBus); o.start(t); o.stop(t+d+.25); }); }
+function chord(ms,t,d,g){ ms.forEach(m=>brass(N(m),t,d,g)); }
+function bell(f,t,d,g){ tone(f,t,d,{g}); tone(f*2.76,t,d*.4,{g:g*.25}); tone(f*5.4,t,d*.2,{g:g*.08}); }
+function crash(t){ noise(t,1.6,{g:.2,f:7000,type:'highpass',att:.002}); noise(t,.8,{g:.08,f:3500,q:.5,att:.002}); }
+function timp(t){ tone(N(43),t,.7,{g:.35,to:N(41)}); noise(t,.08,{g:.15,f:300,q:1,att:.002}); }
+function snareRoll(t,d){ for(let x=0;x<d;x+=.038) noise(t+x,.05,{g:.04+.2*(x/d),f:2300,q:.6,att:.001}); crash(t+d); timp(t+d); }
+function glass(t,s=1){ [[2600,.9,.12],[3550,.6,.07],[5200,.3,.03]].forEach(([f,d,g])=>tone(f*s,t,d,{g})); tone(2600*s*1.01,t+.004,.8,{g:.05}); }
+function springBoing(t){ const a=audio,o=a.createOscillator(),v=a.createGain(),l=a.createOscillator(),lg=a.createGain();
+  o.frequency.setValueAtTime(220,t); o.frequency.exponentialRampToValueAtTime(700,t+.15); l.frequency.value=14; lg.gain.value=60; l.connect(lg).connect(o.frequency);
+  v.gain.setValueAtTime(.3,t); v.gain.exponentialRampToValueAtTime(.0001,t+.7); o.connect(v).connect(fxBus); o.start(t); l.start(t); o.stop(t+.75); l.stop(t+.75); }
+
+/* 효과음 종류별 버전 (첫 번째가 기본값) */
+const FX_CATS=[['fanfare','팡파레'],['chime','띵동 (문제)'],['drumroll','드럼롤'],['ding','딩동댕 (정답)'],['wrong','땡 (오답)'],['clink','건배'],['boing','띠용'],['tada','짜잔'],['whoosh','휘익 (자리 바꾸기)'],['shutter','찰칵 (사진)']];
+const VAR={
+  fanfare:[
+    {id:'classic',n:'빰빠라밤 (클래식)',len:1300,f:t=>{ [0,.13,.26].forEach(x=>chord([67,72],t+x,.11,.1)); chord([72,76,79],t+.42,.9,.13); timp(t+.42); crash(t+.42); }},
+    {id:'award',n:'시상식 팡파레',len:1900,f:t=>{ let x=0; [[67,.18],[72,.18],[76,.18],[79,.45]].forEach(([m,d])=>{ chord([m,m-12],t+x,d,.1); x+=d; }); chord([72,76,79,84],t+1,1.1,.12); timp(t+1); crash(t+1); }},
+    {id:'stab',n:'짠! (짧게)',len:700,f:t=>{ chord([60,64,67,72,76],t,.45,.12); crash(t); }},
+    {id:'trumpet',n:'승리 트럼펫',len:1500,f:t=>{ let x=0; [[67,.12],[72,.12],[76,.12],[72,.12],[76,.12],[79,.6]].forEach(([m,d])=>{ brass(N(m),t+x,d,.13); x+=d; }); crash(t+x-.6); }},
+    {id:'game',n:'게임 클리어 (8비트)',len:1200,f:t=>{ [60,64,67,72,76,79,84].forEach((m,i)=>tone(N(m),t+i*.07,.12,{type:'square',g:.06})); [72,76,79,84].forEach(m=>tone(N(m),t+.5,.6,{type:'square',g:.04})); }},
+    {id:'royal',n:'왕실 팡파레 (웅장하게)',len:2000,f:t=>{ let x=0; [[60,.2],[60,.1],[67,.3],[67,.1],[72,.6]].forEach(([m,d])=>{ chord([m,m+7],t+x,d,.11); x+=d; }); chord([60,67,72,76],t+x,.9,.12); timp(t+x); crash(t+x); }},
+    {id:'hit',n:'브라스 히트 (빰!)',len:600,f:t=>{ chord([58,62,65,70],t,.25,.14); crash(t); timp(t); }},
+    {id:'double',n:'빠밤! (두 번)',len:800,f:t=>{ chord([67,71,74],t,.12,.12); chord([72,76,79],t+.16,.45,.13); crash(t+.16); }},
+    {id:'quizshow',n:'퀴즈쇼 오프닝',len:1600,f:t=>{ [60,64,67,72,67,72,76,79].forEach((m,i)=>brass(N(m),t+i*.09,.1,.1)); chord([72,76,79,84],t+.75,.8,.12); crash(t+.75); }},
+    {id:'rising',n:'상승 팡파레 (점점 크게)',len:1500,f:t=>{ [60,62,64,65,67,69,71].forEach((m,i)=>brass(N(m),t+i*.08,.1,.05+i*.012)); chord([72,76,79],t+.6,.8,.14); timp(t+.6); crash(t+.6); }},
+    {id:'harp',n:'반짝 하프 + 화음',len:1200,f:t=>{ for(let i=0;i<14;i++) bell(N([60,62,64,67,69][i%5]+12*Math.floor(i/5)),t+i*.035,.8,.06); chord([72,76,79],t+.5,.6,.08); }},
+  ],
+  chime:[
+    {id:'quiz',n:'퀴즈 벨 (띵동)',len:800,f:t=>{ bell(N(79),t,.9,.18); bell(N(76),t+.25,1.1,.18); }},
+    {id:'xylo',n:'실로폰 띠리링',len:800,f:t=>[72,76,79,84].forEach((m,i)=>bell(N(m),t+i*.08,.6,.13))},
+    {id:'door',n:'도어벨 딩~동',len:1200,f:t=>{ bell(N(76),t,1.2,.2); bell(N(72),t+.45,1.4,.2); }},
+    {id:'buzzer',n:'버저 (띠딕!)',len:400,f:t=>{ tone(N(88),t,.08,{type:'square',g:.08}); tone(N(88),t+.12,.12,{type:'square',g:.08}); }},
+  ],
+  drumroll:[
+    {id:'snare',n:'스네어 드럼롤 + 심벌',len:1800,f:t=>snareRoll(t,1.6)},
+    {id:'short',n:'짧은 드럼롤',len:1000,f:t=>snareRoll(t,.8)},
+    {id:'timpani',n:'팀파니 롤',len:1800,f:t=>{ for(let x=0;x<1.5;x+=.06) tone(N(43),t+x,.25,{g:.05+.12*x/1.5,to:N(42)}); timp(t+1.5); crash(t+1.5); }},
+    {id:'tension',n:'긴장감 두구두구 (길게)',len:2500,f:t=>snareRoll(t,2.4)},
+  ],
+  ding:[
+    {id:'bell',n:'딩동댕 벨',len:800,f:t=>[72,76,79].forEach((m,i)=>bell(N(m),t+i*.14,.9,.16))},
+    {id:'correct',n:'정답 차임 (밝게)',len:800,f:t=>{ bell(N(84),t,.5,.14); bell(N(88),t+.1,.5,.14); bell(N(91),t+.2,.9,.16); }},
+    {id:'coin',n:'코인 (8비트)',len:400,f:t=>{ tone(N(83),t,.08,{type:'square',g:.07}); tone(N(88),t+.08,.3,{type:'square',g:.07}); }},
+    {id:'level',n:'레벨업 (8비트)',len:900,f:t=>[60,64,67,72,67,72,76].forEach((m,i)=>tone(N(m+12),t+i*.06,.1,{type:'square',g:.05}))},
+  ],
+  wrong:[
+    {id:'buzz',n:'땡! 부저',len:550,f:t=>{ tone(140,t,.5,{type:'square',g:.12}); tone(147,t,.5,{type:'sawtooth',g:.08}); }},
+    {id:'trombone',n:'뿌우~ (실망 트롬본)',len:1300,f:t=>{ let x=0; [[55,.3],[54,.3],[53,.3],[52,.7]].forEach(([m,d])=>{ brass(N(m),t+x,d,.14); x+=d; }); }},
+    {id:'beep',n:'삐빅! (오답)',len:450,f:t=>{ tone(N(62),t,.15,{type:'square',g:.08}); tone(N(58),t+.18,.25,{type:'square',g:.08}); }},
+  ],
+  clink:[
+    {id:'glass',n:'잔 쨍!',len:700,f:t=>glass(t)},
+    {id:'many',n:'여러 잔 쨍쨍쨍',len:1000,f:t=>{ for(let i=0;i<6;i++) glass(t+Math.random()*.5,.6+Math.random()*.4); }},
+  ],
+  boing:[
+    {id:'spring',n:'스프링 띠용~',len:700,f:t=>springBoing(t)},
+    {id:'pyong',n:'뿅 (8비트)',len:300,f:t=>tone(N(72),t,.18,{type:'square',g:.08,to:N(96)})},
+    {id:'slide',n:'미끄러지는 휘이잉↓',len:800,f:t=>tone(1400,t,.7,{type:'triangle',g:.12,to:180})},
+    {id:'twinkle',n:'뾰로롱',len:600,f:t=>{ for(let i=0;i<6;i++) tone(N(84+(i%2?3:0)),t+i*.06,.08,{type:'triangle',g:.08}); }},
+  ],
+  tada:[
+    {id:'chord',n:'짜잔! 화음',len:1000,f:t=>{ chord([60,64,67,72],t,.15,.1); chord([65,69,72,77],t+.18,.8,.12); crash(t+.18); }},
+    {id:'sparkle',n:'반짝반짝',len:900,f:t=>{ for(let i=0;i<10;i++) bell(N(88+Math.floor(Math.random()*8)),t+i*.05,.4,.06); }},
+    {id:'magic',n:'마법 짜잔',len:1200,f:t=>{ for(let i=0;i<12;i++) bell(N(72+i*2),t+i*.03,.6,.05); chord([72,76,79],t+.4,.7,.08); }},
+  ],
+  whoosh:[
+    {id:'wind',n:'휘익 바람',len:450,f:t=>noise(t,.5,{g:.25,f:300,to:4000,q:1.5,att:.2})},
+    {id:'swoosh',n:'슈웅 스윕',len:600,f:t=>{ noise(t,.6,{g:.22,f:3000,to:400,q:2,att:.15}); tone(900,t,.5,{to:200,g:.04}); }},
+    {id:'zip',n:'휙휙 (두 번)',len:600,f:t=>{ noise(t,.22,{g:.25,f:500,to:5000,q:2,att:.08}); noise(t+.26,.22,{g:.25,f:500,to:5000,q:2,att:.08}); }},
+  ],
+  shutter:[
+    {id:'camera',n:'카메라 찰칵',len:300,f:t=>{ noise(t,.04,{g:.45,f:3500,q:.6,att:.001}); noise(t+.08,.05,{g:.35,f:2200,q:.6,att:.001}); }},
+    {id:'film',n:'필름 카메라 찰칵-지잉',len:700,f:t=>{ noise(t,.04,{g:.45,f:3500,q:.6,att:.001}); noise(t+.1,.45,{g:.06,f:1200,q:3}); }},
+  ],
+};
+// 고르는 목록에는 없는 보조 소리
+const HIDDEN={
+  pop:t=>tone(500,t,.12,{to:1100,g:.25}),
+  relax:t=>[60,64,67,72,76].forEach((m,i)=>tone(N(m),t+i*.1,1.2,{type:'triangle',g:.09})),
+  crash:t=>crash(t),
+  finale:t=>{ playAt('fanfare',t); },
+};
+let FXSEL=LS.get('fxsel',{});
+const CUSTOM={};  // 내가 올린 파일: {cat:{name,buffer}}
+const variantOf=c=>VAR[c].find(v=>v.id===FXSEL[c])||VAR[c][0];
+// 팡파레는 기본이 「자동」: 나올 때마다 다른 버전으로 돌아가며 재생
+const LAST={}; let fanIdx=Math.floor(Math.random()*VAR.fanfare.length);
+function chooseVariant(c){ if(c==='fanfare'&&(!FXSEL.fanfare||FXSEL.fanfare==='auto')) return VAR.fanfare[(fanIdx++)%VAR.fanfare.length]; return variantOf(c); }
+function playAt(name,t){
+  if(VAR[name]){
+    if(FXSEL[name]==='off') return;
+    if(FXSEL[name]==='custom'&&CUSTOM[name]){ const s=audio.createBufferSource(); s.buffer=CUSTOM[name].buffer; s.connect(fxBus); s.start(t); return; }
+    const v=chooseVariant(name); LAST[name]=v; v.f(t); return; }
+  if(HIDDEN[name]) HIDDEN[name](t);
+}
+function play(name){ const a=buses(); if(!a||sfxVol<=0) return; try{ playAt(name,a.currentTime+.02); }catch(e){} }
+function fxLen(name){ if(!VAR[name]) return 600; if(FXSEL[name]==='off') return 0;
+  if(FXSEL[name]==='custom'&&CUSTOM[name]) return Math.min(1800,CUSTOM[name].buffer.duration*1000);
+  return (LAST[name]||variantOf(name)).len; }
+
+/* 내 효과음 파일은 이 기기의 브라우저(IndexedDB)에 저장 */
+const IDB={ db:null,
+  open(){ return new Promise(res=>{ try{ const r=indexedDB.open('riskday-mc',1); r.onupgradeneeded=()=>r.result.createObjectStore('fx'); r.onsuccess=()=>{IDB.db=r.result;res(r.result);}; r.onerror=()=>res(null); }catch(e){res(null);} }); },
+  async tx(mode,fn){ const db=IDB.db||await IDB.open(); if(!db) return null; return new Promise(res=>{ try{ const q=fn(db.transaction('fx',mode).objectStore('fx')); q.onsuccess=()=>res(q.result??null); q.onerror=()=>res(null); }catch(e){res(null);} }); },
+  get(k){ return IDB.tx('readonly',s=>s.get(k)); }, set(k,v){ return IDB.tx('readwrite',s=>s.put(v,k)); }, del(k){ return IDB.tx('readwrite',s=>s.delete(k)); } };
+async function loadCustom(){ const a=buses(); if(!a) return;
+  for(const [c] of FX_CATS){ const rec=await IDB.get(c); if(rec&&rec.buf){ try{ CUSTOM[c]={name:rec.name,buffer:await a.decodeAudioData(rec.buf.slice(0))}; }catch(e){} } } }
+// 멘트 내용을 보고 어울리는 효과음을 고름 (장면에 fx를 지정하면 그게 우선)
+function fxFor(sc){ if(sc.fx) return sc.fx; const t=sc.t;
+  if(/두구두구|룰렛 돌립/.test(t)) return 'drumroll';
+  if(/단체사진/.test(t)) return 'shutter';
+  if(/축하|우승/.test(t)) return 'fanfare';
+  if(/모두 감사합니다/.test(t)) return 'finale';
+  if(/함성/.test(t)) return 'fanfare';
+  if(/박수/.test(t)) return 'fanfare';
+  if(/잔을 채우고/.test(t)) return 'clink';
+  if(/쉬어|드셔야|자유 시간|발골/.test(t)) return 'relax';
+  if(/자리 바꾸기/.test(t)) return 'whoosh';
+  if(/문제!|문제,|차례!/.test(t)) return 'chime';
+  if(/하이라이트|환영|게임/.test(t)) return 'tada';
+  if(/끝!/.test(t)) return 'ding';
+  if(/😆|😏|😎|AI입니다/.test(t)) return 'boing';
+  return 'pop'; }
+
+/* 배경음악: 120bpm 4마디 루프 (C-G-Am-F), MC가 말할 땐 자동으로 작아짐 */
+const BGM={on:LS.get('bgm',true), vol:LS.get('bgmv',.35), timer:null, step:0, next:0};
+const PROG=[[48,[60,64,67]],[43,[59,62,67]],[45,[60,64,69]],[41,[60,65,69]]];
+const MEL=[76,79,81,79,76,74,72,74, 74,79,83,81,79,77,79,74, 76,72,76,81,79,76,72,76, 77,76,72,69,72,74,77,79];
+function bgmStart(){ const a=buses(); if(!a||BGM.timer) return; BGM.next=a.currentTime+.1; BGM.timer=setInterval(bgmTick,40); bgmLevel(); }
+function bgmLevel(){ if(!bgmBus) return; const target=BGM.on?BGM.vol*.28*(ducked?.3:1):0; bgmBus.gain.setTargetAtTime(target,audio.currentTime,.25); }
+function duck(on){ if(ducked===on) return; ducked=on; bgmLevel(); }
+function bgmTick(){ const a=audio, spb=.25;
+  while(BGM.next<a.currentTime+.25){ const t=BGM.next, s=BGM.step%32, bar=Math.floor(s/8), b=s%8, [root,ch]=PROG[bar];
+    if(BGM.on){
+      if(b%4===0) tone(150,t,.18,{to:45,g:.5,dest:bgmBus});
+      if(b%4===2) noise(t,.09,{g:.06,f:2500,q:.5,att:.01,dest:bgmBus});
+      noise(t,.03,{g:.06,f:8000,type:'highpass',dest:bgmBus});
+      tone(N(root+(b%2?12:0)),t,.22,{type:'triangle',g:.22,dest:bgmBus});
+      if(b%2===1) ch.forEach(m=>tone(N(m),t,.18,{type:'square',g:.025,dest:bgmBus}));
+      tone(N(MEL[s]),t,.2,{type:'triangle',g:.05,dest:bgmBus});
+    }
+    BGM.next+=spb; BGM.step++; } }
+let tt=null; function toast(m){const t=$('#toast'); t.textContent=m; t.style.opacity=1; clearTimeout(tt); tt=setTimeout(()=>t.style.opacity=0,1600);}
+function confetti(n){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cv=$('#fx'),x=cv.getContext('2d'); cv.width=innerWidth; cv.height=innerHeight;
+  const cols=['#ff6a4d','#ffcf3a','#3fd0b0','#5aa9ff','#b38cff','#fff7ea'];
+  const P=Array.from({length:n||160},()=>({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*.5,vx:(Math.random()-.5)*4,vy:2+Math.random()*4,r:Math.random()*6,c:cols[Math.floor(Math.random()*cols.length)],a:Math.random()*6}));
+  const t0=performance.now();
+  (function f(t){x.clearRect(0,0,cv.width,cv.height); P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.05;p.a+=.1;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-4,-2,8+p.r,4);x.restore();});
+    if(t-t0<3200) requestAnimationFrame(f); else x.clearRect(0,0,cv.width,cv.height);})(t0);
+}
+
+/* ---------------- 오버레이 / 메뉴 ---------------- */
+function closeOv(){document.querySelectorAll('.overlay').forEach(o=>o.hidden=true);}
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeOv);
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)closeOv();}));
+$('#scoreBtn').onclick=()=>{renderScores();$('#scoreOv').hidden=false;};
+$('#menuBtn').onclick=()=>{
+  const L=$('#menuList'); L.innerHTML='';
+  SECTIONS.forEach((s,i)=>{const b=el('button',null,`${s.t}<span>${s.brk?'자율':s.d}</span>`); b.onclick=()=>jumpSection(i); L.appendChild(b);});
+  $('#mReset').textContent='점수 초기화'; $('#mImg').textContent=customImg?'올린 이미지 지우기':'MC 이미지 직접 올리기';
+  $('#menuOv').hidden=false;};
+function fillVoices(){const s=$('#sVoice'), vs=koVoices(); s.innerHTML='';
+  if(!vs.length){s.appendChild(el('option',null,'기기 기본 목소리 (한국어 음성 없음)')); $('#sVoiceHint').hidden=false; return;}
+  const best=vs.find(x=>x.name===voiceName)||vs[0];
+  vs.forEach((v,k)=>{const o=el('option',null,(k===0&&voiceScore(v)>0?'⭐ 추천 · ':'')+v.name); o.value=v.name; if(v===best) o.selected=true; s.appendChild(o);});
+  $('#sVoiceHint').hidden = voiceScore(vs[0])>0;}
+function syncSound(){ $('#sTts').checked=tts; $('#sVol').value=vol; $('#sRate').value=rate; $('#sSfx').value=sfxVol;
+  $('#sPitch').value=pitch; $('#sPitchT').textContent=pitch==1?'기본':(pitch>1?'높게 ':'낮게 ')+Number(pitch).toFixed(2);
+  $('#sBgm').checked=BGM.on; $('#sBgmV').value=BGM.vol; $('#sBgmT').textContent=Math.round(BGM.vol*100)+'%';
+  $('#sVolT').textContent=Math.round(vol*100)+'%'; $('#sRateT').textContent=Number(rate).toFixed(2)+'배'; $('#sSfxT').textContent=Math.round(sfxVol*100)+'%';
+  $('#ttsChk').checked=tts; $('#sHq').checked=hq; }
+function openSound(){ closeOv(); fillVoices(); syncSound(); $('#soundOv').hidden=false; }
+$('#soundBtn').onclick=openSound; $('#mTts').onclick=openSound; $('#startSound').onclick=()=>{tts=$('#ttsChk').checked;openSound();};
+$('#sTts').onchange=e=>{tts=e.target.checked;LS.set('tts',tts);if(!tts)try{speechSynthesis.cancel()}catch(e){} syncSound();};
+$('#sVol').oninput=e=>{vol=+e.target.value;LS.set('vol',vol);syncSound();};
+$('#sRate').oninput=e=>{rate=+e.target.value;LS.set('rate2',rate);syncSound();};
+$('#sPitch').oninput=e=>{pitch=+e.target.value;LS.set('pitch',pitch);syncSound();};
+$('#sSfx').oninput=e=>{sfxVol=+e.target.value;LS.set('sfxv2',sfxVol);syncSound();};
+$('#sSfx').onchange=()=>{ac();play('fanfare');};
+$('#sBgm').onchange=e=>{BGM.on=e.target.checked;LS.set('bgm',BGM.on);bgmStart();bgmLevel();};
+$('#sBgmV').oninput=e=>{BGM.vol=+e.target.value;LS.set('bgmv',BGM.vol);bgmStart();bgmLevel();syncSound();};
+$('#sHq').onchange=e=>{hq=e.target.checked;LS.set('hq',hq);stopClip();};
+$('#sVoice').onchange=e=>{voiceName=e.target.value;LS.set('voice',voiceName);};
+function renderFx(){ const L=$('#fxList'); L.innerHTML='';
+  FX_CATS.forEach(([c,label])=>{ const r=el('div','fxrow'); r.appendChild(el('b',null,label));
+    const s=el('select'); s.id='fx_'+c; s.setAttribute('aria-label',label+' 효과음 종류');
+    if(c==='fanfare'){ const o=el('option',null,'자동 · 매번 다른 팡파레 (추천)'); o.value='auto'; s.appendChild(o); }
+    VAR[c].forEach(v=>{ const o=el('option',null,v.n); o.value=v.id; s.appendChild(o); });
+    if(CUSTOM[c]){ const o=el('option',null,'내 파일 · '+CUSTOM[c].name); o.value='custom'; s.appendChild(o); }
+    const off=el('option',null,'소리 없음'); off.value='off'; s.appendChild(off);
+    const dflt=c==='fanfare'?'auto':VAR[c][0].id; s.value=(FXSEL[c]==='custom'&&!CUSTOM[c])?dflt:(FXSEL[c]||dflt);
+    s.onchange=()=>{ FXSEL[c]=s.value; LS.set('fxsel',FXSEL); play(c); };
+    const pb=el('button','btn sm','▶'); pb.setAttribute('aria-label',label+' 미리듣기'); pb.onclick=()=>{ ac(); play(c); };
+    const ub=el('button','btn sm',CUSTOM[c]?'파일 지우기':'내 파일');
+    ub.onclick=async()=>{ if(CUSTOM[c]){ delete CUSTOM[c]; await IDB.del(c); if(FXSEL[c]==='custom'){FXSEL[c]=VAR[c][0].id;LS.set('fxsel',FXSEL);} renderFx(); toast(label+' 파일을 지웠어요'); return; }
+      const fi=$('#fxFile'); fi.value=''; fi.dataset.cat=c; fi.click(); };
+    r.append(s,pb,ub);
+    if(CUSTOM[c]) r.appendChild(el('small',null,'올린 파일: '+CUSTOM[c].name));
+    L.appendChild(r); }); }
+$('#fxFile').onchange=async e=>{ const f=e.target.files[0], c=e.target.dataset.cat; if(!f||!c) return;
+  const a=buses(); if(!a) return;
+  try{ const buf=await f.arrayBuffer(); const decoded=await a.decodeAudioData(buf.slice(0));
+    CUSTOM[c]={name:f.name,buffer:decoded}; await IDB.set(c,{name:f.name,buf}); FXSEL[c]='custom'; LS.set('fxsel',FXSEL); renderFx(); play(c);
+    toast('효과음을 바꿨어요');
+  }catch(err){ toast('이 파일은 재생할 수 없어요. MP3나 WAV 파일을 올려주세요'); } };
+$('#fxPick').onclick=async()=>{ ac(); await loadCustom(); closeOv(); renderFx(); $('#fxOv').hidden=false; };
+$('#fxBack').onclick=openSound;
+const TEST_LINE=()=>`안녕하세요! 리스크공학부 야유회 AI MC, ${curChar().name}입니다! 제 목소리 잘 들리시나요?`;
+$('#sTest').onclick=()=>{ac();unlockVoice(); if(hq&&VF[sayable(TEST_LINE())]){ const my=++run; const was=tts; tts=true; speakSeg(TEST_LINE(),my).then(()=>{ if(my===run) talking(false); }); tts=was; } else speak(TEST_LINE(),true);};
+$('#mFull').onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>toast('이 화면에서는 전체화면을 지원하지 않아요'));}catch(e){}};
+let resetArm=false; $('#mReset').onclick=()=>{ if(!resetArm){resetArm=true;$('#mReset').textContent='한 번 더 누르면 초기화';setTimeout(()=>{resetArm=false;$('#mReset').textContent='점수 초기화'},3000);return;} scores=[0,0,0,0,0];LS.set('scores',scores);picked.clear();LS.set('picked',[]);moved.clear();LS.set('moved',[]);renderScores();refreshStand();resetArm=false;toast('점수를 초기화했어요');$('#mReset').textContent='점수 초기화';};
+$('#mImg').onclick=()=>{ if(customImg){customImg=null;LS.set('img',null);renderChar();closeOv();} else $('#imgIn').click(); };
+$('#imgIn').onchange=e=>{const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{customImg=r.result; LS.set('img',customImg); renderChar(); closeOv(); toast('MC 이미지를 바꿨어요');}; r.readAsDataURL(f);};
+
+/* ---------------- 시작 화면 ---------------- */
+function showStart(){
+  const P=$('#picks'); P.innerHTML='';
+  CHARS.forEach(c=>{const b=el('button','pick'+(c.id===charId?' on':''),`${svgChar(c)}<b>${c.name}</b><span>${c.tag}</span><em>${c.desc}</em>`);
+    b.onclick=()=>{charId=c.id;LS.set('char',charId);customImg=null;LS.set('img',null);showStart();}; P.appendChild(b);});
+  $('#ttsChk').checked=tts;
+  $('#resumeBtn').hidden = idx===0; $('#resumeBtn').textContent=`이어서 진행 (${idx+1}번째 장면)`;
+  $('#start').hidden=false;
+}
+function begin(from){
+  tts=$('#ttsChk').checked; LS.set('tts',tts); ac(); if(tts) unlockVoice(); bgmStart(); loadCustom();
+  $('#start').hidden=true; renderChar(); renderScores();
+  try{navigator.wakeLock&&navigator.wakeLock.request('screen').catch(()=>{});}catch(e){}
+  go(from);
+}
+$('#goBtn').onclick=()=>begin(0);
+$('#resumeBtn').onclick=()=>begin(idx);
+
+$('#nextBtn').onclick=next; $('#prevBtn').onclick=prev; $('#bubble').onclick=next;
+document.addEventListener('keydown',e=>{ if(!$('#start').hidden) return; if(e.target.closest('input')) return;
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();next();}
+  if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev();} });
+try{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>{ if(!$('#soundOv').hidden) fillVoices(); };}catch(e){}
+
+renderChar(); renderScores(); renderRail(); showStart();
+</script>
+
+</body></html>
